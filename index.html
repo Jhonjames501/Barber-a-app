@@ -45,7 +45,7 @@
             font-size: 14px;
             color: #ddd;
         }
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #444;
@@ -53,6 +53,10 @@
             color: #fff;
             border-radius: 6px;
             font-size: 16px;
+        }
+        textarea {
+            resize: none;
+            height: 60px;
         }
         button {
             width: 100%;
@@ -69,11 +73,39 @@
         button:hover {
             background-color: #e08e0b;
         }
-        .share-container {
-            text-align: center;
+        .info-section {
             margin-top: 20px;
             border-top: 1px solid #333;
             padding-top: 15px;
+            text-align: center;
+        }
+        .info-section p {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+        .social-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .btn-social, .btn-map {
+            flex: 1;
+            padding: 8px;
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 13px;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        .btn-social:hover, .btn-map:hover {
+            background-color: #444;
+        }
+        .share-container {
+            margin-top: 10px;
         }
         .btn-share {
             background-color: transparent;
@@ -95,14 +127,22 @@
 <body>
 
     <div class="container">
-        <!-- AQUÍ PUEDES CAMBIAR EL NOMBRE DE LA BARBERÍA -->
-        <h1>Barbería BARBAROS</h1>
+        <h1>Barbería BÁRBAROS</h1>
         <p class="subtitle">Reserva tu corte con tu barbero de confianza</p>
         
         <form id="reservaForm">
             <div class="form-group">
                 <label for="nombre">Tu nombre:</label>
                 <input type="text" id="nombre" required placeholder="Ej. Carlos Pérez">
+            </div>
+
+            <div class="form-group">
+                <label for="barbero">Selecciona al Barbero:</label>
+                <select id="barbero">
+                    <option value="Cualquier Barbero / El que esté libre">Cualquier Barbero</option>
+                    <option value="Barbero Principal">Barbero Principal</option>
+                    <option value="Jhon (Tu Barbero)">Jhon</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -121,7 +161,7 @@
                 <label for="hora">Hora Disponible:</label>
                 <select id="hora">
                     <option value="11:00 AM">11:00 AM</option>
-                    <option value="12:00 AM">12:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
                     <option value="01:00 PM">01:00 PM</option>
                     <option value="02:00 PM">02:00 PM</option>
                     <option value="03:00 PM">03:00 PM</option>
@@ -132,11 +172,25 @@
                 </select>
             </div>
 
+            <div class="form-group">
+                <label for="nota">Observación o Detalle (Opcional):</label>
+                <textarea id="nota" placeholder="Ej. Con diseño de raya a un lado..."></textarea>
+            </div>
+
             <button type="submit">Reservar por WhatsApp</button>
         </form>
 
-        <div class="share-container">
-            <button type="button" class="btn-share" id="btnCompartir">Compartir Aplicación 📤</button>
+        <div class="info-section">
+            <p>📍 Visítanos y conoce más de nosotros</p>
+            <div class="social-buttons">
+                <!-- Cambia los enlaces por los de la barbería real -->
+                <a href="https://maps.google.com" target="_blank" class="btn-map">Ver Ubicación 🗺️</a>
+                <a href="https://instagram.com" target="_blank" class="btn-social">Instagram 📷</a>
+            </div>
+
+            <div class="share-container">
+                <button type="button" class="btn-share" id="btnCompartir">Compartir Aplicación 📤</button>
+            </div>
         </div>
     </div>
 
@@ -147,22 +201,27 @@
             e.preventDefault();
 
             const nombre = document.getElementById('nombre').value;
+            const barbero = document.getElementById('barbero').value;
             const servicio = document.getElementById('servicio').value;
             const hora = document.getElementById('hora').value;
+            const nota = document.getElementById('nota').value;
 
-            // NÚMERO CONFIGURADO
             const numeroWhatsApp = "51996887022"; 
 
-            const texto = `Hola, quiero reservar una cita.%0A%0A*Cliente:* ${nombre}%0A*Servicio:* ${servicio}%0A*Hora:* ${hora}`;
+            let texto = `Hola, quiero reservar una cita.%0A%0A*Cliente:* ${nombre}%0A*Barbero:* ${barbero}%0A*Servicio:* ${servicio}%0A*Hora:* ${hora}`;
+            
+            if (nota) {
+                texto += `%0A*Nota:* ${nota}`;
+            }
             
             window.open(`https://wa.me/${numeroWhatsApp}?text=${texto}`, '_blank');
         });
 
-        // Función para el botón de compartir
+        // Botón de compartir
         document.getElementById('btnCompartir').addEventListener('click', async function() {
             const shareData = {
-                title: 'Barbería BARBAROS',
-                text: '¡Reserva tu corte de cabello fácilmente en la Barbería BARBAROS!',
+                title: 'Barbería BÁRBAROS',
+                text: '¡Reserva tu corte de cabello fácilmente en la Barbería BÁRBAROS!',
                 url: window.location.href
             };
 
@@ -170,7 +229,7 @@
                 if (navigator.share) {
                     await navigator.share(shareData);
                 } else {
-                    const mensaje = encodeURIComponent("¡Reserva tu cita en Barbería BARBAROS aquí: " + window.location.href + " !");
+                    const mensaje = encodeURIComponent("¡Reserva tu cita en Barbería BÁRBAROS aquí: " + window.location.href + " !");
                     window.open("https://api.whatsapp.com/send?text=" + mensaje, "_blank");
                 }
             } catch (err) {
