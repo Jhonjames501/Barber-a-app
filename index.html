@@ -33,7 +33,6 @@
             background-size: 30px 30px;
             z-index: 1;
         }
-        /* Líneas de calles simuladas */
         .street-1 { position: absolute; top: 30%; left: -10%; width: 120%; height: 12px; background: #fff; transform: rotate(-15deg); border-top: 2px solid #ddd; border-bottom: 2px solid #ddd; }
         .street-2 { position: absolute; top: 15%; left: 0%; width: 100%; height: 15px; background: #fff; transform: rotate(35deg); border-top: 2px solid #ddd; border-bottom: 2px solid #ddd; }
         .pin-local { position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #121212; color: #d4af37; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; border: 2px solid #d4af37; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2; display: flex; align-items: center; gap: 5px; }
@@ -86,7 +85,7 @@
         }
         .menu-item:hover, .menu-item.active { background: #d4af37; color: #0b0b0b; }
 
-        /* Barra Superior Estilo InDrive (Origen) */
+        /* Tarjeta Superior de Ubicación */
         .top-location-card {
             position: absolute;
             top: 15px;
@@ -141,9 +140,9 @@
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
         }
         .search-bar-indrive span.icon { font-size: 18px; }
-        .search-bar-indrive span.text { font-size: 14px; color: #441; font-weight: bold; color: #333; }
+        .search-bar-indrive span.text { font-size: 14px; font-weight: bold; color: #333; }
 
-        /* Historial de Locales Cercanos / Sugeridos */
+        /* Locales Cercanos Activos */
         .location-history-item {
             display: flex;
             align-items: center;
@@ -166,7 +165,7 @@
         .history-details h4 { font-size: 13px; color: #111; margin-bottom: 2px; }
         .history-details p { font-size: 11px; color: #666; }
 
-        /* Categorías / Opciones Inferiores */
+        /* Categorías Inferiores */
         .grid-categories {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -187,7 +186,7 @@
         .category-card h5 { font-size: 12px; color: #111; }
         .category-card span { font-size: 18px; align-self: flex-end; }
 
-        /* Vistas Ocultas de la App (Catálogo, Reservas, etc.) */
+        /* Vistas Ocultas de la App */
         .app-full-view {
             display: none;
             position: absolute;
@@ -230,13 +229,13 @@
         <div class="menu-item" onclick="abrirVista('vista-pagos')">💳 Yape / Plin / QR</div>
     </div>
 
-    <!-- TARJETA SUPERIOR DE UBICACIÓN (DE DÓNDE) -->
+    <!-- TARJETA SUPERIOR DE UBICACIÓN -->
     <div class="top-location-card">
         <span class="label">Tu ubicación actual</span>
         <span class="address">📍 Carabayllo, Lima Norte</span>
     </div>
 
-    <!-- PANEL INFERIOR DESLIZABLE ESTILO INDRIVE -->
+    <!-- PANEL INFERIOR DESLIZABLE -->
     <div class="bottom-sheet">
         <div class="sheet-handle"></div>
 
@@ -249,7 +248,7 @@
         <!-- Locales Cercanos Activos -->
         <div style="font-size: 12px; font-weight: bold; color: #555; margin-bottom: 8px; text-transform: uppercase;">Locales Activos Cerca</div>
 
-        <div class="location-history-item" onclick="irAlLocal('Bárbaros Central')">
+        <div class="location-history-item" onclick="irAlLocal('Bárbaros Central Carabayllo')">
             <div class="history-icon">💈</div>
             <div class="history-details">
                 <h4>Bárbaros - Central Carabayllo</h4>
@@ -257,7 +256,7 @@
             </div>
         </div>
 
-        <div class="location-history-item" onclick="irAlLocal('Sucursal Norte')">
+        <div class="location-history-item" onclick="irAlLocal('Bárbaros Sucursal Norte')">
             <div class="history-icon">✂️</div>
             <div class="history-details">
                 <h4>Bárbaros - Sucursal Norte</h4>
@@ -298,7 +297,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Hora:</label>
+                <label>Llegada:</label>
                 <select id="hora">
                     <option value="Inmediato (En camino)">Inmediato (En camino)</option>
                     <option value="En 15 minutos">En 15 minutos</option>
@@ -354,7 +353,7 @@
         }
 
         function irAlLocal(nombreLocal) {
-            const texto = encodeURIComponent(`Hola, vi el local ${nombre} en el mapa de la app y voy en camino para atenderme.`);
+            const texto = encodeURIComponent(`Hola, vi el local *${nombreLocal}* en el mapa de la app y voy en camino para atenderme.`);
             window.open(`https://wa.me/51996887022?text=${texto}`, '_blank');
         }
 
@@ -364,7 +363,7 @@
             const servicio = document.getElementById('servicio').value;
             const hora = document.getElementById('hora').value;
             
-            const texto = encodeURIComponent(`Hola, soy *${nombre}*. Quiero reservar el servicio de *${servicio* }* con llegada: *${hora}*.`);
+            const texto = encodeURIComponent(`Hola, soy *${nombre}*. Quiero reservar el servicio de *${servicio}* con llegada: *${hora}*.`);
             window.open(`https://wa.me/51996887022?text=${texto}`, '_blank');
         });
 
