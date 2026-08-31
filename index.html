@@ -74,7 +74,8 @@
 <body>
 
     <div class="container">
-        <h1>Barber Shop</h1>
+        <!-- AQUÍ PUEDES CAMBIAR EL NOMBRE DE LA BARBERÍA -->
+        <h1>Barbería El Primo</h1>
         <p class="subtitle">Reserva tu corte con tu barbero de confianza</p>
         
         <form id="reservaForm">
@@ -86,10 +87,12 @@
             <div class="form-group">
                 <label for="servicio">Selecciona el Servicio:</label>
                 <select id="servicio">
-                    <option value="Corte Clásico">Corte Clásico - S/ 20</option>
-                    <option value="Fade / Degradado">Fade / Degradado - S/ 25</option>
-                    <option value="Corte + Barba">Corte + Barba - S/ 35</option>
-                    <option value="Diseño / Barbería Completa">Diseño / Barbería Completa - S/ 45</option>
+                    <option value="Corte Escolar / Niños - S/ 15">Corte Escolar / Niños - S/ 15</option>
+                    <option value="Corte Clásico - S/ 20">Corte Clásico - S/ 20</option>
+                    <option value="Fade / Degradado - S/ 25">Fade / Degradado - S/ 25</option>
+                    <option value="Corte + Barba - S/ 35">Corte + Barba - S/ 35</option>
+                    <option value="Corte + Cejas - S/ 28">Corte + Cejas - S/ 28</option>
+                    <option value="Diseño / Barbería Completa - S/ 45">Diseño / Barbería Completa - S/ 45</option>
                 </select>
             </div>
 
@@ -118,8 +121,8 @@
             const servicio = document.getElementById('servicio').value;
             const hora = document.getElementById('hora').value;
 
-            // Recuerda cambiar 51999999999 por el número real de tu primo (código 51 para Perú)
-            const numeroWhatsApp = "51996887022"; 
+            // PON AQUÍ EL NÚMERO DE TU PRIMO (código 51 para Perú)
+            const numeroWhatsApp = "51999999999"; 
 
             const texto = `Hola, quiero reservar una cita.%0A%0A*Cliente:* ${nombre}%0A*Servicio:* ${servicio}%0A*Hora:* ${hora}`;
             
