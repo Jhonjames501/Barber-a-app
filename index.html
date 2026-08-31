@@ -75,12 +75,12 @@
 
     <div class="container">
         <!-- AQUÍ PUEDES CAMBIAR EL NOMBRE DE LA BARBERÍA -->
-        <h1>Barbería El Primo</h1>
+        <h1>Barbería BARBAROS</h1>
         <p class="subtitle">Reserva tu corte con tu barbero de confianza</p>
         
         <form id="reservaForm">
             <div class="form-group">
-                <label for="nombre">Tu Nombre:</label>
+                <label for="nombre">Tu nombre:</label>
                 <input type="text" id="nombre" required placeholder="Ej. Carlos Pérez">
             </div>
 
@@ -99,6 +99,10 @@
             <div class="form-group">
                 <label for="hora">Hora Disponible:</label>
                 <select id="hora">
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 AM">12:00 AM</option>
+                    <option value="01:00 PM">01:00 PM</option>
+                    <option value="02:00 PM">02:00 PM</option>
                     <option value="03:00 PM">03:00 PM</option>
                     <option value="04:00 PM">04:00 PM</option>
                     <option value="05:00 PM">05:00 PM</option>
@@ -122,7 +126,7 @@
             const hora = document.getElementById('hora').value;
 
             // PON AQUÍ EL NÚMERO DE TU PRIMO (código 51 para Perú)
-            const numeroWhatsApp = "51999999999"; 
+            const numeroWhatsApp = "51996887022"; 
 
             const texto = `Hola, quiero reservar una cita.%0A%0A*Cliente:* ${nombre}%0A*Servicio:* ${servicio}%0A*Hora:* ${hora}`;
             
