@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbería Bárbaros - Tu Estilo</title>
     
-    <!-- SDKs de Firebase (Versión Modular oficial corregida) -->
+    <!-- SDKs de Firebase (Versión Modular oficial con Auth y Firestore) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
         import { getFirestore, collection } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+        import { getAuth, FacebookAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
         // Configuración oficial de tu base de datos de Firebase
         const firebaseConfig = {
@@ -23,6 +24,9 @@
         // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         window.db = getFirestore(app);
+        window.auth = getAuth(app);
+        window.FacebookAuthProvider = FacebookAuthProvider;
+        window.signInWithPopup = signInWithPopup;
     </script>
 
     <style>
@@ -299,6 +303,26 @@
         button.main-btn:hover {
             opacity: 0.9;
         }
+        .btn-facebook {
+            width: 100%;
+            padding: 10px;
+            background-color: #1877f2;
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-facebook:hover {
+            background-color: #145dbf;
+        }
         .payment-methods {
             text-align: center;
             margin: 10px 0;
@@ -407,10 +431,15 @@
                 <span id="estadoNegocio" class="badge">Verificando horario...</span>
             </div>
 
+            <!-- Botón de Facebook Login -->
+            <button type="button" id="btnFacebook" class="btn-facebook">
+                🔵 Iniciar sesión con Facebook
+            </button>
+
             <form id="reservaForm">
                 <div class="form-group">
                     <label for="nombre">Tu nombre:</label>
-                    <input type="text" id="nombre" required placeholder="Ej. Carlos Pérez">
+                    <input type="text" id="nombre" required placeholder="Ej. Carlos Pérez (o usa Facebook)">
                 </div>
 
                 <div class="form-group">
@@ -554,7 +583,7 @@
         </div>
     </div>
 
-    <!-- Script de lógica y guardado con addDoc corregido -->
+    <!-- Script de lógica y autenticación con Facebook -->
     <script type="module">
         import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
@@ -577,6 +606,22 @@
             const btn = document.getElementById('menuBtn');
             if (!menu.contains(e.target) && !btn.contains(e.target)) {
                 menu.classList.remove('show');
+            }
+        });
+
+        // Lógica de inicio de sesión con Facebook
+        document.getElementById('btnFacebook').addEventListener('click', async function() {
+            try {
+                const provider = new window.FacebookAuthProvider();
+                const result = await window.signInWithPopup(window.auth, provider);
+                const user = result.user;
+                
+                // Rellena automáticamente el campo de nombre con el perfil de Facebook
+                document.getElementById('nombre').value = user.displayName;
+                alert("¡Sesión iniciada con éxito, " + user.displayName + "!");
+            } catch (error) {
+                console.log("Error al iniciar sesión con Facebook: ", error);
+                alert("No se pudo iniciar sesión con Facebook. Asegúrate de activarlo en tu consola de Firebase.");
             }
         });
 
