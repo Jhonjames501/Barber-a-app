@@ -69,123 +69,6 @@
         button:hover {
             background-color: #e08e0b;
         }
-        #mensaje {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1>Barber Shop</h1>
-        <p class="subtitle">Reserva tu corte con tu barbero de confianza</p>
-        
-        <form id="reservaForm">
-            <div class="form-group">
-                <label for="nombre">Tu Nombre:</label>
-                <input type="text" id="nombre" required placeholder="Ej. Carlos Pérez">
-            </div>
-
-            <div class="form-group">
-                <label for="servicio">Selecciona el Servicio:</label>
-                <select id="servicio">
-                    <option value="Corte Clásico">Corte Clásico - S/ 20</option>
-                    <option value="Fade / Degradado">Fade / Degradado - S/ 25</option>
-                    <option value="Corte + Barba">Corte + Barba - S/ 35</option>
-                    <option value="Diseño / Barbería Completa">Diseño / Barbería Completa - S/ 45</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="hora">Hora Disponible:</label>
-                <select id="hora">
-                    <option value="03:00 PM">03:00 PM</option>
-                    <option value="04:00 PM">04:00 PM</option>
-                    <option value="05:00 PM">05:00 PM</option>
-                    <option value="06:00 PM">06:00 PM</option>
-                    <option value="07:00 PM">07:00 PM</option>
-                </select>
-            </div>
-
-            <button type="submit">Reservar Cita</button>
-        </form>
-
-        <div id="mensaje"></div>
-    </div>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barber Shop - Reserva tu Cita</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            padding: 20px;
-        }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        h1 {
-            text-align: center;
-            color: #f39c12;
-            margin-bottom: 5px;
-            font-size: 24px;
-        }
-        p.subtitle {
-            text-align: center;
-            color: #aaa;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #ddd;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #444;
-            background: #2c2c2c;
-            color: #fff;
-            border-radius: 6px;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #f39c12;
-            border: none;
-            color: #121212;
-            font-weight: bold;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #e08e0b;
-        }
     </style>
 </head>
 <body>
@@ -235,30 +118,12 @@
             const servicio = document.getElementById('servicio').value;
             const hora = document.getElementById('hora').value;
 
-            // Reemplaza 51999999999 por el número real de tu primo (código 51 para Perú)
+            // Recuerda cambiar 51999999999 por el número real de tu primo (código 51 para Perú)
             const numeroWhatsApp = "51999999999"; 
 
             const texto = `Hola primo, quiero reservar una cita.%0A%0A*Cliente:* ${nombre}%0A*Servicio:* ${servicio}%0A*Hora:* ${hora}`;
             
             window.open(`https://wa.me/${numeroWhatsApp}?text=${texto}`, '_blank');
-        });
-    </script>
-
-</body>
-</html>
-
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const nombre = document.getElementById('nombre').value;
-            const servicio = document.getElementById('servicio').value;
-            const hora = document.getElementById('hora').value;
-
-            mensajeDiv.style.color = "#2ecc71";
-            mensajeDiv.innerHTML = `¡Listo, <b>${nombre}</b>! Reservaste <b>${servicio}</b> para las <b>${hora}</b>. Tu primo ya recibió la alerta.`;
-
-            form.reset();
         });
     </script>
 
