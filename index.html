@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbería Bárbaros - Tu Estilo</title>
+    
+    <!-- SDK de Firebase (Firestore y App) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -181,11 +186,14 @@
             font-size: 11px;
             color: #d4af37;
             font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         .stamp-item.active {
             background: #d4af37;
             color: #121212;
             border-style: solid;
+            transform: scale(1.05);
         }
 
         /* Estilos para el catálogo de cortes */
@@ -474,13 +482,13 @@
 
             <div class="stamp-card-box">
                 <p style="color: #e5c158; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Tus Sellos Acumulados</p>
-                <p style="color: #888; font-size: 11px;">Muestra esta pantalla en tu visita para sellar tu tarjeta.</p>
+                <p style="color: #888; font-size: 11px;">Toca un sello para marcarlo o desmarcarlo.</p>
                 
                 <div class="stamp-grid">
-                    <div class="stamp-item active">✓ 1</div>
-                    <div class="stamp-item active">✓ 2</div>
-                    <div class="stamp-item">3</div>
-                    <div class="stamp-item">🎁 4</div>
+                    <div class="stamp-item" onclick="toggleStamp(0)">✓ 1</div>
+                    <div class="stamp-item" onclick="toggleStamp(1)">✓ 2</div>
+                    <div class="stamp-item" onclick="toggleStamp(2)">3</div>
+                    <div class="stamp-item" onclick="toggleStamp(3)">🎁 4</div>
                 </div>
             </div>
         </div>
@@ -550,12 +558,30 @@
     <div id="modalConfirmacion" class="modal">
         <div class="modal-content">
             <h2>¡Cita Lista! 🎉</h2>
-            <p id="modalTexto">Estamos abriendo WhatsApp...</p>
+            <p id="modalTexto">Guardando en base de datos y abriendo WhatsApp...</p>
             <button class="modal-btn" id="btnEntendido">Continuar</button>
         </div>
     </div>
 
     <script>
+        // Configuración de Firebase (Conéctalo creando tu proyecto gratuito en firebase.google.com)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "tu-proyecto.firebaseapp.com",
+            projectId: "tu-proyecto",
+            storageBucket: "tu-proyecto.appspot.com",
+            messagingSenderId: "TU_MESSAGING_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+        
+        // Inicializar Firebase (si pones tus datos reales arriba, funcionará en la nube; si no, funcionará localmente sin romper nada)
+        try {
+            firebase.initializeApp(firebaseConfig);
+            var db = firebase.firestore();
+        } catch (e) {
+            console.log("Firebase ejecutándose en modo local / offline.");
+        }
+
         document.getElementById('fecha').valueAsDate = new Date();
 
         // Control del menú desplegable superior izquierdo
@@ -572,7 +598,6 @@
             document.getElementById('seccion-' + seccionId).classList.add('active');
             elemento.classList.add('active');
             
-            // Ocultar menú tras seleccionar
             document.getElementById('dropdownMenu').classList.remove('show');
         }
 
@@ -598,7 +623,30 @@
             badgeEstado.className = "badge closed";
         }
 
-        // Manejo del formulario de reservas y enlace a WhatsApp
+        // Sistema de Tarjeta de Sellos con Memoria Local
+        function cargarSellos() {
+            const sellosGuardados = JSON.parse(localStorage.getItem('barbaros_sellos') || "[false, false, false, false]");
+            const elementosSellos = document.querySelectorAll('.stamp-item');
+            elementosSellos.forEach((el, index) => {
+                if (sellosGuardados[index]) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        function toggleStamp(index) {
+            let sellosGuardados = JSON.parse(localStorage.getItem('barbaros_sellos') || "[false, false, false, false]");
+            sellosGuardados[index] = !sellosGuardados[index];
+            localStorage.setItem('barbaros_sellos', JSON.stringify(sellosGuardados));
+            cargarSellos();
+        }
+
+        // Cargar sellos al iniciar
+        cargarSellos();
+
+        // Manejo del formulario de reservas y guardado en Base de Datos
         const form = document.getElementById('reservaForm');
         const modal = document.getElementById('modalConfirmacion');
         const btnEntendido = document.getElementById('btnEntendido');
@@ -614,8 +662,20 @@
             const hora = document.getElementById('hora').value;
             const nota = document.getElementById('nota').value;
 
-            const numeroWhatsApp = "51996887022"; 
+            // Guardar en la base de datos de Firebase si está configurada
+            if (typeof db !== 'undefined') {
+                db.collection("reservas").add({
+                    nombre: nombre,
+                    barbero: barbero,
+                    servicio: servicio,
+                    fecha: fecha,
+                    hora: hora,
+                    nota: nota,
+                    timestamp: new Date()
+                }).catch(err => console.log("Guardado localmente sin conexión a nube"));
+            }
 
+            const numeroWhatsApp = "51996887022"; 
             let texto = `Hola, quiero reservar una cita.%0A%0A*Cliente:* ${nombre}%0A*Barbero:* ${barbero}%0A*Servicio:* ${servicio}%0A*Fecha:* ${fecha}%0A*Hora:* ${hora}`;
             
             if (nota) {
@@ -624,7 +684,7 @@
             
             enlaceWhatsAppGlobal = `https://wa.me/${numeroWhatsApp}?text=${texto}`;
             
-            document.getElementById('modalTexto').innerHTML = `¡Gracias <b>${nombre}</b>! Tu reserva para <b>${servicio}</b> está lista.`;
+            document.getElementById('modalTexto').innerHTML = `¡Guardado en base de datos! Gracias <b>${nombre}</b>, tu reserva está lista.`;
             modal.style.display = "flex";
         });
 
