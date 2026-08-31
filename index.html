@@ -50,6 +50,28 @@
         .open { background-color: #27ae60; color: #fff; }
         .closed { background-color: #c0392b; color: #fff; }
 
+        /* Banner de Fidelización ajustado exactamente a la tarjeta */
+        .loyalty-banner {
+            background: linear-gradient(135deg, #2a2416, #1e1e1e);
+            border: 1px solid #f39c12;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .loyalty-banner h3 {
+            color: #f39c12;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+        .loyalty-banner p {
+            color: #ddd;
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: left;
+            margin-left: 10px;
+        }
+
         .form-group {
             margin-bottom: 15px;
         }
@@ -93,7 +115,6 @@
             font-size: 13px;
             color: #888;
         }
-        /* Estilos para el mensaje emergente (Modal) */
         .modal {
             display: none;
             position: fixed;
@@ -196,6 +217,15 @@
             <span id="estadoNegocio" class="badge">Verificando horario...</span>
         </div>
 
+        <!-- Banner con los textos exactos de la tarjeta de fidelidad -->
+        <div class="loyalty-banner">
+            <h3>✨ Recompensamos tu fidelidad ✨</h3>
+            <p>
+                • <b>1er regalo:</b> Corte con 50% de descuento o facial gratis.<br>
+                • <b>2do regalo:</b> Corte gratis / cera de regalo / facial gratis.
+            </p>
+        </div>
+
         <form id="reservaForm">
             <div class="form-group">
                 <label for="nombre">Tu nombre:</label>
@@ -268,7 +298,7 @@
         </div>
     </div>
 
-    <!-- Ventana emergente (Modal de Confirmación) -->
+    <!-- Ventana emergente (Modal) -->
     <div id="modalConfirmacion" class="modal">
         <div class="modal-content">
             <h2>¡Cita Lista! 🎉</h2>
@@ -280,7 +310,6 @@
     <script>
         document.getElementById('fecha').valueAsDate = new Date();
 
-        // Control de Abierto / Cerrado
         const ahora = new Date();
         const horaActual = ahora.getHours();
         const badgeEstado = document.getElementById('estadoNegocio');
@@ -318,18 +347,15 @@
             
             enlaceWhatsAppGlobal = `https://wa.me/${numeroWhatsApp}?text=${texto}`;
             
-            // Mostrar la ventana emergente de confirmación
             document.getElementById('modalTexto').innerHTML = `¡Gracias <b>${nombre}</b>! Tu reserva para <b>${servicio}</b> ha sido procesada con éxito.`;
             modal.style.display = "flex";
         });
 
-        // Al hacer clic en el botón de la ventana emergente, abre WhatsApp
         btnEntendido.addEventListener('click', function() {
             modal.style.display = "none";
             window.open(enlaceWhatsAppGlobal, '_blank');
         });
 
-        // Botón de compartir
         document.getElementById('btnCompartir').addEventListener('click', async function() {
             const shareData = {
                 title: 'Barbería BÁRBAROS',
