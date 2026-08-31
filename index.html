@@ -5,9 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbería Bárbaros - Tu Estilo</title>
     
-    <!-- SDK de Firebase (Firestore y App) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- SDKs de Firebase (Versión Modular oficial) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+        import { getFirestore, collection, addTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+        // Configuración oficial de tu base de datos de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBVtONSUVPAx2QifPvYMnGv0hGVZjXu2I",
+            authDomain: "barberia-barbaros-cd5a7.firebaseapp.com",
+            projectId: "barberia-barbaros-cd5a7",
+            storageBucket: "barberia-barbaros-cd5a7.firebasestorage.app",
+            messagingSenderId: "364219973051",
+            appId: "1:364219973051:web:e3a3ef18733924be11589e"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        window.db = getFirestore(app);
+    </script>
 
     <style>
         * {
@@ -563,35 +579,19 @@
         </div>
     </div>
 
-    <script>
-        // Configuración de Firebase (Conéctalo creando tu proyecto gratuito en firebase.google.com)
-        const firebaseConfig = {
-            apiKey: "TU_API_KEY",
-            authDomain: "tu-proyecto.firebaseapp.com",
-            projectId: "tu-proyecto",
-            storageBucket: "tu-proyecto.appspot.com",
-            messagingSenderId: "TU_MESSAGING_SENDER_ID",
-            appId: "TU_APP_ID"
-        };
-        
-        // Inicializar Firebase (si pones tus datos reales arriba, funcionará en la nube; si no, funcionará localmente sin romper nada)
-        try {
-            firebase.initializeApp(firebaseConfig);
-            var db = firebase.firestore();
-        } catch (e) {
-            console.log("Firebase ejecutándose en modo local / offline.");
-        }
+    <script type="module">
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
         document.getElementById('fecha').valueAsDate = new Date();
 
         // Control del menú desplegable superior izquierdo
-        function toggleMenu() {
+        window.toggleMenu = function() {
             const menu = document.getElementById('dropdownMenu');
             menu.classList.toggle('show');
         }
 
         // Seleccionar opción del menú desplegable
-        function seleccionarOpcion(seccionId, elemento) {
+        window.seleccionarOpcion = function(seccionId, elemento) {
             document.querySelectorAll('.section-view').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
 
@@ -624,7 +624,7 @@
         }
 
         // Sistema de Tarjeta de Sellos con Memoria Local
-        function cargarSellos() {
+        window.cargarSellos = function() {
             const sellosGuardados = JSON.parse(localStorage.getItem('barbaros_sellos') || "[false, false, false, false]");
             const elementosSellos = document.querySelectorAll('.stamp-item');
             elementosSellos.forEach((el, index) => {
@@ -636,23 +636,22 @@
             });
         }
 
-        function toggleStamp(index) {
+        window.toggleStamp = function(index) {
             let sellosGuardados = JSON.parse(localStorage.getItem('barbaros_sellos') || "[false, false, false, false]");
             sellosGuardados[index] = !sellosGuardados[index];
             localStorage.setItem('barbaros_sellos', JSON.stringify(sellosGuardados));
-            cargarSellos();
+            window.cargarSellos();
         }
 
-        // Cargar sellos al iniciar
-        cargarSellos();
+        window.cargarSellos();
 
-        // Manejo del formulario de reservas y guardado en Base de Datos
+        // Manejo del formulario de reservas y guardado en Base de Datos de Firebase
         const form = document.getElementById('reservaForm');
         const modal = document.getElementById('modalConfirmacion');
         const btnEntendido = document.getElementById('btnEntendido');
         let enlaceWhatsAppGlobal = "";
 
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const nombre = document.getElementById('nombre').value;
@@ -662,17 +661,22 @@
             const hora = document.getElementById('hora').value;
             const nota = document.getElementById('nota').value;
 
-            // Guardar en la base de datos de Firebase si está configurada
-            if (typeof db !== 'undefined') {
-                db.collection("reservas").add({
-                    nombre: nombre,
-                    barbero: barbero,
-                    servicio: servicio,
-                    fecha: fecha,
-                    hora: hora,
-                    nota: nota,
-                    timestamp: new Date()
-                }).catch(err => console.log("Guardado localmente sin conexión a nube"));
+            // Guardar en la base de datos de la nube (Firebase Firestore)
+            try {
+                if (window.db) {
+                    await addDoc(collection(window.db, "reservas"), {
+                        nombre: nombre,
+                        barbero: barbero,
+                        servicio: servicio,
+                        fecha: fecha,
+                        hora: hora,
+                        nota: nota,
+                        timestamp: new Date()
+                    });
+                    console.log("Reserva guardada en Firebase exitosamente.");
+                }
+            } catch (err) {
+                console.log("Error al guardar en Firebase: ", err);
             }
 
             const numeroWhatsApp = "51996887022"; 
@@ -684,7 +688,7 @@
             
             enlaceWhatsAppGlobal = `https://wa.me/${numeroWhatsApp}?text=${texto}`;
             
-            document.getElementById('modalTexto').innerHTML = `¡Guardado en base de datos! Gracias <b>${nombre}</b>, tu reserva está lista.`;
+            document.getElementById('modalTexto').innerHTML = `¡Guardado en la nube! Gracias <b>${nombre}</b>, tu reserva está lista.`;
             modal.style.display = "flex";
         });
 
