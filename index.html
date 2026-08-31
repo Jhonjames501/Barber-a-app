@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbería Bárbaros - Tu Estilo</title>
+    <title>Barbería Bárbaros - Radar GPS</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,39 +12,32 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #f2f2f2;
-            color: #111;
+            background-color: #121212;
+            color: #f1f1f1;
             height: 100vh;
             overflow: hidden;
             position: relative;
         }
 
-        /* Fondo simulando el Mapa de InDrive */
-        .map-background {
+        /* Contenedor del Mapa Real (Google Maps Integrado) */
+        #map-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 60%;
-            background: #e8eaed;
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
+            height: 55%;
+            background: #1e1e1e;
             z-index: 1;
         }
-        .street-1 { position: absolute; top: 30%; left: -10%; width: 120%; height: 12px; background: #fff; transform: rotate(-15deg); border-top: 2px solid #ddd; border-bottom: 2px solid #ddd; }
-        .street-2 { position: absolute; top: 15%; left: 0%; width: 100%; height: 15px; background: #fff; transform: rotate(35deg); border-top: 2px solid #ddd; border-bottom: 2px solid #ddd; }
-        .pin-local { position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #121212; color: #d4af37; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; border: 2px solid #d4af37; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2; display: flex; align-items: center; gap: 5px; }
 
         /* Botón de Menú Flotante Superior Izquierdo */
         .menu-toggle-btn {
             position: absolute;
             top: 15px;
             left: 15px;
-            background: #fff;
-            border: none;
-            color: #111;
+            background: #181818;
+            border: 1px solid #d4af37;
+            color: #d4af37;
             width: 42px;
             height: 42px;
             border-radius: 50%;
@@ -54,7 +47,7 @@
             font-size: 20px;
             cursor: pointer;
             z-index: 20;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
 
         /* Menú Desplegable */
@@ -66,8 +59,8 @@
             background: #181818;
             border: 1px solid #d4af37;
             border-radius: 12px;
-            width: 220px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            width: 230px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.9);
             z-index: 30;
             overflow: hidden;
         }
@@ -85,24 +78,25 @@
         }
         .menu-item:hover, .menu-item.active { background: #d4af37; color: #0b0b0b; }
 
-        /* Tarjeta Superior de Ubicación */
+        /* Tarjeta Superior de Ubicación GPS */
         .top-location-card {
             position: absolute;
             top: 15px;
             left: 70px;
             right: 15px;
-            background: #fff;
-            padding: 12px 15px;
+            background: rgba(18, 18, 18, 0.92);
+            backdrop-filter: blur(5px);
+            padding: 10px 15px;
             border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             z-index: 10;
             display: flex;
             flex-direction: column;
             gap: 2px;
-            border: 1px solid #eee;
+            border: 1px solid #d4af37;
         }
-        .top-location-card span.label { font-size: 10px; color: #888; font-weight: bold; text-transform: uppercase; }
-        .top-location-card span.address { font-size: 13px; color: #111; font-weight: bold; }
+        .top-location-card span.label { font-size: 10px; color: #d4af37; font-weight: bold; text-transform: uppercase; }
+        .top-location-card span.address { font-size: 12px; color: #fff; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* Panel Deslizable Inferior Estilo InDrive */
         .bottom-sheet {
@@ -110,83 +104,64 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 52%;
-            background: #fff;
+            height: 48%;
+            background: #161616;
+            border-top: 2px solid #d4af37;
             border-radius: 24px 24px 0 0;
-            box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.8);
             z-index: 15;
-            padding: 20px;
+            padding: 15px 20px;
             overflow-y: auto;
         }
         .sheet-handle {
             width: 40px;
             height: 4px;
-            background: #ccc;
+            background: #444;
             border-radius: 2px;
-            margin: 0 auto 15px auto;
+            margin: 0 auto 12px auto;
         }
 
         /* Buscador Principal */
         .search-bar-indrive {
-            background: #f4f4f4;
-            border: 1px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            margin-bottom: 15px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
-        }
-        .search-bar-indrive span.icon { font-size: 18px; }
-        .search-bar-indrive span.text { font-size: 14px; font-weight: bold; color: #333; }
-
-        /* Locales Cercanos Activos */
-        .location-history-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-        }
-        .location-history-item:last-child { border-bottom: none; }
-        .history-icon {
-            background: #f0f0f0;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        .history-details h4 { font-size: 13px; color: #111; margin-bottom: 2px; }
-        .history-details p { font-size: 11px; color: #666; }
-
-        /* Categorías Inferiores */
-        .grid-categories {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .category-card {
-            background: #f8f8f8;
-            border: 1px solid #eee;
+            background: #222;
+            border: 1px solid #333;
             border-radius: 14px;
-            padding: 12px;
+            padding: 12px 16px;
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 80px;
+            align-items: center;
+            gap: 12px;
             cursor: pointer;
+            margin-bottom: 12px;
         }
-        .category-card h5 { font-size: 12px; color: #111; }
-        .category-card span { font-size: 18px; align-self: flex-end; }
+        .search-bar-indrive span.text { font-size: 13px; font-weight: bold; color: #e5c158; }
 
-        /* Vistas Ocultas de la App */
+        /* Locales Cercanos Activos con GPS Real */
+        .location-history-item {
+            background: #1c1c1c;
+            border: 1px solid #2c2c2c;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-details h4 { font-size: 13px; color: #e5c158; margin-bottom: 2px; }
+        .history-details p { font-size: 11px; color: #aaa; }
+        
+        .btn-ruta {
+            background: #d4af37;
+            color: #0b0b0b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* Vistas Ocultas (Reservas, Catálogo, Pagos) */
         .app-full-view {
             display: none;
             position: absolute;
@@ -208,15 +183,15 @@
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #333; background: #1a1a1a; color: #fff; border-radius: 8px; font-size: 14px; }
         button.main-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #d4af37, #aa820a); border: none; color: #0b0b0b; font-weight: bold; font-size: 14px; border-radius: 8px; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
     </style>
+
+    <!-- Cargando Leaflet (Librería de Mapas Reales Interactivos sin restricciones de pago) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
-    <!-- MAPA DE FONDO ESTILO INDRIVE -->
-    <div class="map-background">
-        <div class="street-1"></div>
-        <div class="street-2"></div>
-        <div class="pin-local">✂️ Bárbaros Central (Abierto)</div>
-    </div>
+    <!-- MAPA REAL GPS -->
+    <div id="map-container"></div>
 
     <!-- BOTÓN MENÚ FLOTANTE -->
     <button class="menu-toggle-btn" onclick="toggleMenu()">☰</button>
@@ -224,64 +199,51 @@
     <!-- MENÚ DESPLEGABLE -->
     <div class="dropdown-menu" id="dropdownMenu">
         <div class="menu-item" onclick="abrirVista('vista-reserva')">📅 Reservar Cita</div>
-        <div class="menu-item" onclick="cerrarVistas()">📍 Mapa de Ubicación</div>
+        <div class="menu-item" onclick="cerrarVistas()">📍 Radar GPS Activo</div>
         <div class="menu-item" onclick="abrirVista('vista-catalogo')">✂️ Precios y Catálogo</div>
         <div class="menu-item" onclick="abrirVista('vista-pagos')">💳 Yape / Plin / QR</div>
     </div>
 
-    <!-- TARJETA SUPERIOR DE UBICACIÓN -->
+    <!-- TARJETA SUPERIOR DE UBICACIÓN REAL -->
     <div class="top-location-card">
-        <span class="label">Tu ubicación actual</span>
-        <span class="address">📍 Carabayllo, Lima Norte</span>
+        <span class="label">Tu ubicación GPS actual</span>
+        <span class="address" id="texto-gps">Detectando satélites GPS...</span>
     </div>
 
-    <!-- PANEL INFERIOR DESLIZABLE -->
+    <!-- PANEL INFERIOR ESTILO INDRIVE -->
     <div class="bottom-sheet">
         <div class="sheet-handle"></div>
 
-        <!-- Buscador Principal -->
         <div class="search-bar-indrive" onclick="abrirVista('vista-reserva')">
-            <span class="icon">🔍</span>
-            <span class="text">¿Qué servicio necesitas hoy?</span>
+            <span>🔍</span>
+            <span class="text">¿Qué servicio necesitas en el local?</span>
         </div>
 
-        <!-- Locales Cercanos Activos -->
-        <div style="font-size: 12px; font-weight: bold; color: #555; margin-bottom: 8px; text-transform: uppercase;">Locales Activos Cerca</div>
+        <div style="font-size: 11px; font-weight: bold; color: #888; margin-bottom: 8px; text-transform: uppercase;">Barberías Bárbaros Disponibles Cerca</div>
 
-        <div class="location-history-item" onclick="irAlLocal('Bárbaros Central Carabayllo')">
-            <div class="history-icon">💈</div>
+        <!-- Local 1 -->
+        <div class="location-history-item">
             <div class="history-details">
                 <h4>Bárbaros - Central Carabayllo</h4>
-                <p>🟢 Abierto • A 4 cuadras • S/ 20 Fade</p>
+                <p id="distancia-local-1">Calculando distancia real...</p>
             </div>
+            <button class="btn-ruta" onclick="trazarRuta(-11.8545, -77.0425, 'Bárbaros Central Carabayllo')">Ir con GPS</button>
         </div>
 
-        <div class="location-history-item" onclick="irAlLocal('Bárbaros Sucursal Norte')">
-            <div class="history-icon">✂️</div>
+        <!-- Local 2 -->
+        <div class="location-history-item">
             <div class="history-details">
-                <h4>Bárbaros - Sucursal Norte</h4>
-                <p>🟢 Abierto • A 8 cuadras • Sin espera</p>
+                <h4>Bárbaros - Sucursal Universitaria</h4>
+                <p id="distancia-local-2">Calculando distancia real...</p>
             </div>
-        </div>
-
-        <!-- Categorías Estilo InDrive -->
-        <div class="grid-categories">
-            <div class="category-card" onclick="abrirVista('vista-catalogo')">
-                <h5>Ver Cortes y Precios</h5>
-                <span>📋</span>
-            </div>
-            <div class="category-card" onclick="abrirVista('vista-pagos')">
-                <h5>Pagos QR (Yape)</h5>
-                <span>💳</span>
-            </div>
+            <button class="btn-ruta" onclick="trazarRuta(-11.8610, -77.0480, 'Bárbaros Sucursal Universitaria')">Ir con GPS</button>
         </div>
     </div>
 
     <!-- VISTA INTERNA: RESERVAS -->
     <div id="vista-reserva" class="app-full-view">
-        <button class="back-btn" onclick="cerrarVistas()">← Volver al Mapa</button>
-        <h2 style="color: #e5c158; font-size: 20px; margin-bottom: 15px;">Reservar en Local Cercano</h2>
-        
+        <button class="back-btn" onclick="cerrarVistas()">← Volver al Radar</button>
+        <h2 style="color: #e5c158; font-size: 20px; margin-bottom: 15px;">Reservar y Avisar por WhatsApp</h2>
         <form id="reservaForm">
             <div class="form-group">
                 <label>Tu Nombre:</label>
@@ -293,33 +255,29 @@
                     <option value="Fade / Degradado - S/ 25">Fade / Degradado - S/ 25</option>
                     <option value="Corte Clásico - S/ 20">Corte Clásico - S/ 20</option>
                     <option value="Corte + Barba - S/ 35">Corte + Barba - S/ 35</option>
-                    <option value="Corte Escolar - S/ 15">Corte Escolar - S/ 15</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>Llegada:</label>
-                <select id="hora">
-                    <option value="Inmediato (En camino)">Inmediato (En camino)</option>
-                    <option value="En 15 minutos">En 15 minutos</option>
-                    <option value="En 30 minutos">En 30 minutos</option>
+                <label>¿A qué local vas?:</label>
+                <select id="localDestino">
+                    <option value="Central Carabayllo">Central Carabayllo</option>
+                    <option value="Sucursal Universitaria">Sucursal Universitaria</option>
                 </select>
             </div>
-            <button type="submit" class="main-btn">Confirmar y Abrir WhatsApp</button>
+            <button type="submit" class="main-btn">Enviar Alerta a WhatsApp</button>
         </form>
     </div>
 
     <!-- VISTA INTERNA: CATÁLOGO -->
     <div id="vista-catalogo" class="app-full-view">
-        <button class="back-btn" onclick="cerrarVistas()">← Volver al Mapa</button>
+        <button class="back-btn" onclick="cerrarVistas()">← Volver al Radar</button>
         <h2 style="color: #e5c158; font-size: 20px; margin-bottom: 15px;">Precios de Servicios</h2>
         <div style="background: #1a1a1a; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333;">
             <h4 style="color: #e5c158;">Fade / Degradado</h4>
-            <p style="color: #aaa; font-size: 12px;">Moderno difuminado al ras</p>
             <p style="color: #27ae60; font-weight: bold; margin-top: 5px;">S/ 25</p>
         </div>
         <div style="background: #1a1a1a; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333;">
             <h4 style="color: #e5c158;">Corte Clásico</h4>
-            <p style="color: #aaa; font-size: 12px;">Tradicional y limpio</p>
             <p style="color: #27ae60; font-weight: bold; margin-top: 5px;">S/ 20</p>
         </div>
     </div>
@@ -333,10 +291,85 @@
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE-BARBERIA-BARBAROS" alt="QR" style="width: 140px; height: 140px;">
         </div>
         <p style="color: #27ae60; font-size: 15px; font-weight: bold;">Número: 996 887 022</p>
-        <p style="color: #aaa; font-size: 12px; margin-top: 5px;">Titular: Barbería Bárbaros</p>
     </div>
 
     <script>
+        // Coordenadas fijas de tus barberías en Carabayllo
+        const local1 = { lat: -11.8545, lng: -77.0425, name: "Central Carabayllo" };
+        const local2 = { lat: -11.8610, lng: -77.0480, name: "Sucursal Universitaria" };
+
+        // Inicializar Mapa Real Centrado en Carabayllo
+        let map = L.map('map-container').setView([-11.8570, -77.0450], 15);
+
+        // Capa de diseño oscuro para el mapa
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{z}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Pines de los locales reales en el mapa
+        L.marker([local1.lat, local1.lng]).addTo(map).bindPopup("<b>Bárbaros Central</b><br>Abierto ahora");
+        L.marker([local2.lat, local2.lng]).addTo(map).bindPopup("<b>Bárbaros Universitaria</b><br>Abierto ahora");
+
+        let userLat = null;
+        let userLng = null;
+
+        // ACTIVAR GPS REAL DEL CELULAR
+        if ("geolocation" in navigator) {
+            navigator.geolocation.watchPosition(
+                function(position) {
+                    userLat = position.coords.latitude;
+                    userLng = position.coords.longitude;
+
+                    document.getElementById('texto-gps').innerText = `Lat: ${userLat.toFixed(4)}, Lng: ${userLng.toFixed(4)}`;
+
+                    // Calcular distancias reales en kilómetros
+                    let d1 = calcularDistancia(userLat, userLng, local1.lat, local1.lng);
+                    let d2 = calcularDistancia(userLat, userLng, local2.lat, local2.lng);
+
+                    document.getElementById('distancia-local-1').innerText = `🟢 Abierto • A ${d1.toFixed(1)} km de ti`;
+                    document.getElementById('distancia-local-2').innerText = `🟢 Abierto • A ${d2.toFixed(1)} km de ti`;
+
+                    // Poner marcador del cliente en tiempo real
+                    if (window.userMarker) {
+                        window.userMarker.setLatLng([userLat, userLng]);
+                    } else {
+                        window.userMarker = L.marker([userLat, userLng], {
+                            icon: L.divIcon({ className: 'user-pin', html: '📍', iconSize: [25, 25] })
+                        }).addTo(map).bindPopup("Tú estás aquí");
+                    }
+                },
+                function(error) {
+                    document.getElementById('texto-gps').innerText = "GPS desactivado o bloqueado por el navegador";
+                },
+                { enableHighAccuracy: true }
+            );
+        } else {
+            document.getElementById('texto-gps').innerText = "Tu navegador no soporta GPS";
+        }
+
+        // Fórmula matemática para calcular distancia real entre dos puntos GPS
+        function calcularDistancia(lat1, lon1, lat2, lon2) {
+            let R = 6371; // Radio de la Tierra en km
+            let dLat = (lat2 - lat1) * Math.PI / 180;
+            let dLon = (lon2 - lon1) * Math.PI / 180;
+            let a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Función que abre Google Maps para guiar al cliente hasta el local
+        function trazarRuta(destLat, destLng, nombreLocal) {
+            if (userLat && userLng) {
+                // Abre Google Maps con la ruta desde la posición GPS actual hasta la barbería
+                window.open(`https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${destLat},${destLng}&travelmode=walking`, '_blank');
+            } else {
+                window.open(`https://www.google.com/maps/search/?api=1&query=${destLat},${destLng}`, '_blank');
+            }
+        }
+
         function toggleMenu() {
             document.getElementById('dropdownMenu').classList.toggle('show');
         }
@@ -352,27 +385,14 @@
             document.getElementById('dropdownMenu').classList.remove('show');
         }
 
-        function irAlLocal(nombreLocal) {
-            const texto = encodeURIComponent(`Hola, vi el local *${nombreLocal}* en el mapa de la app y voy en camino para atenderme.`);
-            window.open(`https://wa.me/51996887022?text=${texto}`, '_blank');
-        }
-
         document.getElementById('reservaForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const nombre = document.getElementById('nombre').value;
             const servicio = document.getElementById('servicio').value;
-            const hora = document.getElementById('hora').value;
+            const localDestino = document.getElementById('localDestino').value;
             
-            const texto = encodeURIComponent(`Hola, soy *${nombre}*. Quiero reservar el servicio de *${servicio}* con llegada: *${hora}*.`);
+            const texto = encodeURIComponent(`Hola, soy *${nombre}*. Quiero reservar *${servicio}* en el local *${localDestino}* y voy en camino.`);
             window.open(`https://wa.me/51996887022?text=${texto}`, '_blank');
-        });
-
-        window.addEventListener('click', function(e) {
-            const menu = document.getElementById('dropdownMenu');
-            const btn = document.querySelector('.menu-toggle-btn');
-            if (!menu.contains(e.target) && !btn.contains(e.target)) {
-                menu.classList.remove('show');
-            }
         });
     </script>
 </body>
