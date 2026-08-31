@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barber Shop - Reserva tu Cita</title>
+    <title>Barbería BÁRBAROS - Reserva tu Cita</title>
     <style>
         * {
             box-sizing: border-box;
@@ -38,7 +38,7 @@
         }
         .status-badge {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .badge {
             display: inline-block;
@@ -92,6 +92,48 @@
             margin: 15px 0;
             font-size: 13px;
             color: #888;
+        }
+        /* Estilos para el mensaje emergente (Modal) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #222;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            border: 2px solid #f39c12;
+        }
+        .modal-content h2 {
+            color: #f39c12;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        .modal-content p {
+            color: #ddd;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .modal-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
         }
         .info-section {
             margin-top: 20px;
@@ -226,11 +268,19 @@
         </div>
     </div>
 
+    <!-- Ventana emergente (Modal de Confirmación) -->
+    <div id="modalConfirmacion" class="modal">
+        <div class="modal-content">
+            <h2>¡Cita Lista! 🎉</h2>
+            <p id="modalTexto">Estamos abriendo WhatsApp para enviar los datos de tu reserva...</p>
+            <button class="modal-btn" id="btnEntendido">Continuar a WhatsApp</button>
+        </div>
+    </div>
+
     <script>
-        // Poner la fecha de hoy automáticamente en el calendario al abrir la página
         document.getElementById('fecha').valueAsDate = new Date();
 
-        // Control automático de Abierto / Cerrado (Ej: abierto de 10am a 9pm)
+        // Control de Abierto / Cerrado
         const ahora = new Date();
         const horaActual = ahora.getHours();
         const badgeEstado = document.getElementById('estadoNegocio');
@@ -244,6 +294,9 @@
         }
 
         const form = document.getElementById('reservaForm');
+        const modal = document.getElementById('modalConfirmacion');
+        const btnEntendido = document.getElementById('btnEntendido');
+        let enlaceWhatsAppGlobal = "";
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -263,7 +316,17 @@
                 texto += `%0A*Nota:* ${nota}`;
             }
             
-            window.open(`https://wa.me/${numeroWhatsApp}?text=${texto}`, '_blank');
+            enlaceWhatsAppGlobal = `https://wa.me/${numeroWhatsApp}?text=${texto}`;
+            
+            // Mostrar la ventana emergente de confirmación
+            document.getElementById('modalTexto').innerHTML = `¡Gracias <b>${nombre}</b>! Tu reserva para <b>${servicio}</b> ha sido procesada con éxito.`;
+            modal.style.display = "flex";
+        });
+
+        // Al hacer clic en el botón de la ventana emergente, abre WhatsApp
+        btnEntendido.addEventListener('click', function() {
+            modal.style.display = "none";
+            window.open(enlaceWhatsAppGlobal, '_blank');
         });
 
         // Botón de compartir
