@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barbería Bárbaros - Tu Estilo</title>
     
-    <!-- SDKs de Firebase (Versión Modular oficial) -->
+    <!-- SDKs de Firebase (Versión Modular oficial corregida) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-        import { getFirestore, collection, addTimestamp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+        import { getFirestore, collection } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
         // Configuración oficial de tu base de datos de Firebase
         const firebaseConfig = {
@@ -48,8 +48,6 @@
             border: 1px solid #d4af37;
             position: relative;
         }
-        
-        /* Botón de menú en la esquina superior izquierda */
         .menu-toggle-btn {
             position: absolute;
             top: 20px;
@@ -72,8 +70,6 @@
             background: #d4af37;
             color: #0b0b0b;
         }
-
-        /* Menú desplegable flotante */
         .dropdown-menu {
             display: none;
             position: absolute;
@@ -109,7 +105,6 @@
             background: #d4af37;
             color: #0b0b0b;
         }
-
         .brand-header {
             text-align: center;
             margin-bottom: 15px;
@@ -129,14 +124,12 @@
             text-transform: uppercase;
             margin-top: 2px;
         }
-
         .section-view {
             display: none;
         }
         .section-view.active {
             display: block;
         }
-
         .status-badge {
             text-align: center;
             margin-bottom: 15px;
@@ -150,8 +143,6 @@
         }
         .open { background-color: #27ae60; color: #fff; }
         .closed { background-color: #c0392b; color: #fff; }
-
-        /* Banner de Fidelización */
         .loyalty-banner {
             background: linear-gradient(135deg, #1a1710, #111111);
             border: 1px solid #d4af37;
@@ -173,8 +164,6 @@
             text-align: left;
             padding-left: 5px;
         }
-
-        /* Tarjeta Interactiva de Sellos */
         .stamp-card-box {
             background: #171717;
             border: 1px solid #d4af37;
@@ -211,8 +200,6 @@
             border-style: solid;
             transform: scale(1.05);
         }
-
-        /* Estilos para el catálogo de cortes */
         .catalog-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -242,8 +229,6 @@
             font-weight: bold;
             font-size: 14px;
         }
-
-        /* Sección de Pago QR */
         .qr-container {
             background: #171717;
             border: 1px solid #d4af37;
@@ -269,7 +254,6 @@
             font-size: 12px;
             margin-bottom: 10px;
         }
-
         .form-group {
             margin-bottom: 12px;
         }
@@ -403,10 +387,8 @@
 <body>
 
     <div class="container">
-        <!-- Botón de Menú Superior Izquierdo -->
         <button class="menu-toggle-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
 
-        <!-- Menú Desplegable de Opciones -->
         <div class="dropdown-menu" id="dropdownMenu">
             <div class="menu-item active" onclick="seleccionarOpcion('reserva', this)">📅 Reservar Cita</div>
             <div class="menu-item" onclick="seleccionarOpcion('fidelidad', this)">⭐ Tarjeta de Sellos</div>
@@ -414,7 +396,6 @@
             <div class="menu-item" onclick="seleccionarOpcion('pagos', this)">💳 Pagos y QR</div>
         </div>
 
-        <!-- Cabecera -->
         <div class="brand-header">
             <h1>Bárbaros</h1>
             <p class="subtitle">Tu Corte - Tu Estilo</p>
@@ -486,7 +467,7 @@
             </form>
         </div>
 
-        <!-- SECCIÓN 2: TARJETA DE FIDELIZACIÓN DIGITAL -->
+        <!-- SECCIÓN 2: FIDELIZACIÓN -->
         <div id="seccion-fidelidad" class="section-view">
             <div class="loyalty-banner">
                 <h3>★ Recompensamos tu Fidelidad ★</h3>
@@ -495,11 +476,9 @@
                     • <b>2do regalo:</b> Corte gratis / cera / facial gratis.
                 </p>
             </div>
-
             <div class="stamp-card-box">
                 <p style="color: #e5c158; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Tus Sellos Acumulados</p>
                 <p style="color: #888; font-size: 11px;">Toca un sello para marcarlo o desmarcarlo.</p>
-                
                 <div class="stamp-grid">
                     <div class="stamp-item" onclick="toggleStamp(0)">✓ 1</div>
                     <div class="stamp-item" onclick="toggleStamp(1)">✓ 2</div>
@@ -509,7 +488,7 @@
             </div>
         </div>
 
-        <!-- SECCIÓN 3: CATÁLOGO Y PRECIOS -->
+        <!-- SECCIÓN 3: CATÁLOGO -->
         <div id="seccion-catalogo" class="section-view">
             <div class="catalog-grid">
                 <div class="catalog-card">
@@ -547,18 +526,15 @@
         <div id="seccion-pagos" class="section-view">
             <div class="qr-container">
                 <h3 style="color: #e5c158; font-size: 15px; margin-bottom: 5px; text-transform: uppercase;">Yape / Plin / QR</h3>
-                <p class="qr-instructions">Escanea el código con tu celular para realizar el pago rápido de tu servicio:</p>
-                
+                <p class="qr-instructions">Escanea el código con tu celular para realizar el pago rápido:</p>
                 <div class="qr-box">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE-O-PLIN-BARBERIA-BARBAROS" alt="Código QR de Pago">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE-O-PLIN-BARBERIA-BARBAROS" alt="QR">
                 </div>
-
                 <p style="color: #27ae60; font-size: 13px; font-weight: bold; margin-top: 5px;">Número: 996 887 022</p>
                 <p style="color: #aaa; font-size: 11px; margin-top: 3px;">Titular: Barbería Bárbaros</p>
             </div>
         </div>
 
-        <!-- Pie de página común -->
         <div class="info-section">
             <div class="social-buttons">
                 <a href="https://maps.google.com" target="_blank" class="btn-map">Ubicación 🗺️</a>
@@ -570,7 +546,6 @@
         </div>
     </div>
 
-    <!-- Modal -->
     <div id="modalConfirmacion" class="modal">
         <div class="modal-content">
             <h2>¡Cita Lista! 🎉</h2>
@@ -579,29 +554,24 @@
         </div>
     </div>
 
+    <!-- Script de lógica y guardado con addDoc corregido -->
     <script type="module">
         import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
         document.getElementById('fecha').valueAsDate = new Date();
 
-        // Control del menú desplegable superior izquierdo
         window.toggleMenu = function() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.classList.toggle('show');
+            document.getElementById('dropdownMenu').classList.toggle('show');
         }
 
-        // Seleccionar opción del menú desplegable
         window.seleccionarOpcion = function(seccionId, elemento) {
             document.querySelectorAll('.section-view').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-
             document.getElementById('seccion-' + seccionId).classList.add('active');
             elemento.classList.add('active');
-            
             document.getElementById('dropdownMenu').classList.remove('show');
         }
 
-        // Cerrar menú al hacer clic fuera
         window.addEventListener('click', function(e) {
             const menu = document.getElementById('dropdownMenu');
             const btn = document.getElementById('menuBtn');
@@ -610,11 +580,9 @@
             }
         });
 
-        // Verificador de horario del negocio (Abierto de 10:00 AM a 9:00 PM)
         const ahora = new Date();
         const horaActual = ahora.getHours();
         const badgeEstado = document.getElementById('estadoNegocio');
-        
         if (horaActual >= 10 && horaActual < 21) {
             badgeEstado.textContent = "🟢 Abierto Ahora";
             badgeEstado.className = "badge open";
@@ -623,16 +591,11 @@
             badgeEstado.className = "badge closed";
         }
 
-        // Sistema de Tarjeta de Sellos con Memoria Local
         window.cargarSellos = function() {
             const sellosGuardados = JSON.parse(localStorage.getItem('barbaros_sellos') || "[false, false, false, false]");
-            const elementosSellos = document.querySelectorAll('.stamp-item');
-            elementosSellos.forEach((el, index) => {
-                if (sellosGuardados[index]) {
-                    el.classList.add('active');
-                } else {
-                    el.classList.remove('active');
-                }
+            document.querySelectorAll('.stamp-item').forEach((el, index) => {
+                if (sellosGuardados[index]) el.classList.add('active');
+                else el.classList.remove('active');
             });
         }
 
@@ -642,10 +605,8 @@
             localStorage.setItem('barbaros_sellos', JSON.stringify(sellosGuardados));
             window.cargarSellos();
         }
-
         window.cargarSellos();
 
-        // Manejo del formulario de reservas y guardado en Base de Datos de Firebase
         const form = document.getElementById('reservaForm');
         const modal = document.getElementById('modalConfirmacion');
         const btnEntendido = document.getElementById('btnEntendido');
@@ -661,16 +622,10 @@
             const hora = document.getElementById('hora').value;
             const nota = document.getElementById('nota').value;
 
-            // Guardar en la base de datos de la nube (Firebase Firestore)
             try {
                 if (window.db) {
                     await addDoc(collection(window.db, "reservas"), {
-                        nombre: nombre,
-                        barbero: barbero,
-                        servicio: servicio,
-                        fecha: fecha,
-                        hora: hora,
-                        nota: nota,
+                        nombre, barbero, servicio, fecha, hora, nota,
                         timestamp: new Date()
                     });
                     console.log("Reserva guardada en Firebase exitosamente.");
@@ -681,10 +636,7 @@
 
             const numeroWhatsApp = "51996887022"; 
             let texto = `Hola, quiero reservar una cita.%0A%0A*Cliente:* ${nombre}%0A*Barbero:* ${barbero}%0A*Servicio:* ${servicio}%0A*Fecha:* ${fecha}%0A*Hora:* ${hora}`;
-            
-            if (nota) {
-                texto += `%0A*Nota:* ${nota}`;
-            }
+            if (nota) texto += `%0A*Nota:* ${nota}`;
             
             enlaceWhatsAppGlobal = `https://wa.me/${numeroWhatsApp}?text=${texto}`;
             
@@ -697,24 +649,12 @@
             window.open(enlaceWhatsAppGlobal, '_blank');
         });
 
-        // Botón para compartir la app
         document.getElementById('btnCompartir').addEventListener('click', async function() {
-            const shareData = {
-                title: 'Barbería Bárbaros',
-                text: '¡Reserva tu corte de cabello en la Barbería Bárbaros!',
-                url: window.location.href
-            };
-
+            const shareData = { title: 'Barbería Bárbaros', text: '¡Reserva tu corte!', url: window.location.href };
             try {
-                if (navigator.share) {
-                    await navigator.share(shareData);
-                } else {
-                    const mensaje = encodeURIComponent("¡Reserva tu cita en Barbería Bárbaros aquí: " + window.location.href + " !");
-                    window.open(`https://api.whatsapp.com/send?text=${mensaje}`, '_blank');
-                }
-            } catch (err) {
-                console.log("Error al compartir", err);
-            }
+                if (navigator.share) await navigator.share(shareData);
+                else window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(window.location.href)}`, '_blank');
+            } catch (err) { console.log(err); }
         });
     </script>
 </body>
