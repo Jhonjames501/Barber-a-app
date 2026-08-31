@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbería BÁRBAROS - Reserva tu Cita</title>
+    <title>Barbería Bárbaros - Reserva tu Cita</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,64 +12,77 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #121212;
-            color: #ffffff;
+            background-color: #0b0b0b;
+            color: #f1f1f1;
             padding: 20px;
+            background-image: radial-gradient(circle at center, #1c1c1c 0%, #0b0b0b 100%);
         }
         .container {
             max-width: 400px;
             margin: 0 auto;
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            background: #121212;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            border: 1px solid #d4af37; /* Marco dorado elegante estilo tarjeta */
+        }
+        .brand-header {
+            text-align: center;
+            margin-bottom: 20px;
         }
         h1 {
-            text-align: center;
-            color: #f39c12;
-            margin-bottom: 5px;
-            font-size: 24px;
+            color: #e5c158;
+            font-size: 28px;
+            letter-spacing: 1px;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         p.subtitle {
-            text-align: center;
-            color: #aaa;
-            margin-bottom: 10px;
-            font-size: 14px;
+            color: #bfa143;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 4px;
         }
         .status-badge {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .badge {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
+            letter-spacing: 0.5px;
         }
         .open { background-color: #27ae60; color: #fff; }
         .closed { background-color: #c0392b; color: #fff; }
 
-        /* Banner de Fidelización ajustado exactamente a la tarjeta */
+        /* Estilo fidelización inspirado en la tarjeta trasera */
         .loyalty-banner {
-            background: linear-gradient(135deg, #2a2416, #1e1e1e);
-            border: 1px solid #f39c12;
-            border-radius: 8px;
-            padding: 12px;
+            background: linear-gradient(135deg, #1a1710, #111111);
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            padding: 14px;
             margin-bottom: 20px;
             text-align: center;
+            box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.1);
         }
         .loyalty-banner h3 {
-            color: #f39c12;
-            font-size: 15px;
-            margin-bottom: 6px;
+            color: #e5c158;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .loyalty-banner p {
-            color: #ddd;
+            color: #ccc;
             font-size: 12px;
             line-height: 1.5;
             text-align: left;
-            margin-left: 10px;
+            padding-left: 5px;
         }
 
         .form-group {
@@ -77,18 +90,26 @@
         }
         label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #ddd;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #d4af37;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         input, select, textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #444;
-            background: #2c2c2c;
+            padding: 11px;
+            border: 1px solid #333;
+            background: #1a1a1a;
             color: #fff;
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #d4af37;
         }
         textarea {
             resize: none;
@@ -96,24 +117,29 @@
         }
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #f39c12;
+            padding: 14px;
+            background: linear-gradient(135deg, #d4af37, #aa820a);
             border: none;
-            color: #121212;
+            color: #0b0b0b;
             font-weight: bold;
-            font-size: 16px;
-            border-radius: 6px;
+            font-size: 15px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+            transition: opacity 0.2s;
         }
         button:hover {
-            background-color: #e08e0b;
+            opacity: 0.9;
         }
         .payment-methods {
             text-align: center;
-            margin: 15px 0;
-            font-size: 13px;
-            color: #888;
+            margin: 15px 0 5px 0;
+            font-size: 12px;
+            color: #aaa;
+            letter-spacing: 0.5px;
         }
         .modal {
             display: none;
@@ -123,21 +149,21 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.8);
+            background-color: rgba(0,0,0,0.85);
             justify-content: center;
             align-items: center;
         }
         .modal-content {
-            background-color: #222;
+            background-color: #161616;
             padding: 25px;
-            border-radius: 10px;
+            border-radius: 12px;
             width: 90%;
             max-width: 350px;
             text-align: center;
-            border: 2px solid #f39c12;
+            border: 2px solid #d4af37;
         }
         .modal-content h2 {
-            color: #f39c12;
+            color: #e5c158;
             margin-bottom: 10px;
             font-size: 20px;
         }
@@ -145,27 +171,31 @@
             color: #ddd;
             font-size: 14px;
             margin-bottom: 20px;
+            line-height: 1.4;
         }
         .modal-btn {
             background-color: #27ae60;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 20px;
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
+            text-transform: uppercase;
         }
         .info-section {
-            margin-top: 20px;
-            border-top: 1px solid #333;
+            margin-top: 25px;
+            border-top: 1px solid #222;
             padding-top: 15px;
             text-align: center;
         }
         .info-section p {
-            font-size: 13px;
-            color: #aaa;
+            font-size: 12px;
+            color: #888;
             margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .social-buttons {
             display: flex;
@@ -174,55 +204,61 @@
         }
         .btn-social, .btn-map {
             flex: 1;
-            padding: 8px;
-            background-color: #2c2c2c;
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 6px;
-            font-size: 13px;
+            padding: 9px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: #d4af37;
+            border-radius: 8px;
+            font-size: 12px;
             text-decoration: none;
             text-align: center;
             display: inline-block;
+            font-weight: 600;
         }
         .btn-social:hover, .btn-map:hover {
-            background-color: #444;
+            background-color: #262626;
+            border-color: #d4af37;
         }
         .share-container {
             margin-top: 10px;
         }
         .btn-share {
-            background-color: transparent;
-            border: 2px solid #f39c12;
-            color: #f39c12;
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
             padding: 10px;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: none;
         }
         .btn-share:hover {
-            background-color: #f39c12;
-            color: #121212;
+            background-color: #d4af37;
+            color: #0b0b0b;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Barbería BÁRBAROS</h1>
-        <p class="subtitle">Reserva tu corte con tu barbero de confianza</p>
+        <div class="brand-header">
+            <h1>Bárbaros</h1>
+            <p class="subtitle">Tu Corte - Tu Estilo</p>
+        </div>
         
         <div class="status-badge">
             <span id="estadoNegocio" class="badge">Verificando horario...</span>
         </div>
 
-        <!-- Banner con los textos exactos de la tarjeta de fidelidad -->
         <div class="loyalty-banner">
-            <h3>✨ Recompensamos tu fidelidad ✨</h3>
+            <h3>★ Recompensamos tu Fidelidad ★</h3>
             <p>
                 • <b>1er regalo:</b> Corte con 50% de descuento o facial gratis.<br>
-                • <b>2do regalo:</b> Corte gratis / cera de regalo / facial gratis.
+                • <b>2do regalo:</b> Corte gratis / cera / facial gratis.
             </p>
         </div>
 
@@ -286,9 +322,9 @@
         </form>
 
         <div class="info-section">
-            <p>📍 Visítanos y conoce más de nosotros</p>
+            <p>Visítanos y conoce más</p>
             <div class="social-buttons">
-                <a href="https://maps.google.com" target="_blank" class="btn-map">Ver Ubicación 🗺️</a>
+                <a href="https://maps.google.com" target="_blank" class="btn-map">Ubicación 🗺️</a>
                 <a href="https://instagram.com" target="_blank" class="btn-social">Instagram 📷</a>
             </div>
 
@@ -298,7 +334,6 @@
         </div>
     </div>
 
-    <!-- Ventana emergente (Modal) -->
     <div id="modalConfirmacion" class="modal">
         <div class="modal-content">
             <h2>¡Cita Lista! 🎉</h2>
@@ -318,7 +353,7 @@
             badgeEstado.textContent = "🟢 Abierto Ahora";
             badgeEstado.className = "badge open";
         } else {
-            badgeEstado.textContent = "🔴 Cerrado Ahora (Agenda para mañana)";
+            badgeEstado.textContent = "🔴 Cerrado (Agenda para mañana)";
             badgeEstado.className = "badge closed";
         }
 
@@ -347,7 +382,7 @@
             
             enlaceWhatsAppGlobal = `https://wa.me/${numeroWhatsApp}?text=${texto}`;
             
-            document.getElementById('modalTexto').innerHTML = `¡Gracias <b>${nombre}</b>! Tu reserva para <b>${servicio}</b> ha sido procesada con éxito.`;
+            document.getElementById('modalTexto').innerHTML = `¡Gracias <b>${nombre}</b>! Tu reserva para <b>${servicio}</b> ha sido procesada. ¡Recuerda mostrar tu tarjeta para acumular tus sellos!`;
             modal.style.display = "flex";
         });
 
@@ -358,8 +393,8 @@
 
         document.getElementById('btnCompartir').addEventListener('click', async function() {
             const shareData = {
-                title: 'Barbería BÁRBAROS',
-                text: '¡Reserva tu corte de cabello fácilmente en la Barbería BÁRBAROS!',
+                title: 'Barbería Bárbaros',
+                text: '¡Reserva tu corte de cabello fácilmente en la Barbería Bárbaros!',
                 url: window.location.href
             };
 
@@ -367,7 +402,7 @@
                 if (navigator.share) {
                     await navigator.share(shareData);
                 } else {
-                    const mensaje = encodeURIComponent("¡Reserva tu cita en Barbería BÁRBAROS aquí: " + window.location.href + " !");
+                    const mensaje = encodeURIComponent("¡Reserva tu cita en Barbería Bárbaros aquí: " + window.location.href + " !");
                     window.open("https://api.whatsapp.com/send?text=" + mensaje, "_blank");
                 }
             } catch (err) {
