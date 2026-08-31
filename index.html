@@ -61,7 +61,7 @@
             background: #181818;
             border: 1px solid #d4af37;
             border-radius: 10px;
-            width: 200px;
+            width: 210px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.9);
             z-index: 30;
             overflow: hidden;
@@ -219,6 +219,33 @@
             font-size: 14px;
         }
 
+        /* Sección de Pago QR */
+        .qr-container {
+            background: #171717;
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .qr-box {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .qr-box img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+        }
+        .qr-instructions {
+            color: #ccc;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
         .form-group {
             margin-bottom: 12px;
         }
@@ -360,6 +387,7 @@
             <div class="menu-item active" onclick="seleccionarOpcion('reserva', this)">📅 Reservar Cita</div>
             <div class="menu-item" onclick="seleccionarOpcion('fidelidad', this)">⭐ Tarjeta de Sellos</div>
             <div class="menu-item" onclick="seleccionarOpcion('catalogo', this)">✂️ Precios y Cortes</div>
+            <div class="menu-item" onclick="seleccionarOpcion('pagos', this)">💳 Pagos y QR</div>
         </div>
 
         <!-- Cabecera -->
@@ -488,6 +516,22 @@
                     </div>
                     <div class="catalog-price">S/ 15</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 4: PAGOS Y QR -->
+        <div id="seccion-pagos" class="section-view">
+            <div class="qr-container">
+                <h3 style="color: #e5c158; font-size: 15px; margin-bottom: 5px; text-transform: uppercase;">Yape / Plin / QR</h3>
+                <p class="qr-instructions">Escanea el código con tu celular para realizar el pago rápido de tu servicio:</p>
+                
+                <div class="qr-box">
+                    <!-- Aquí puedes cambiar el enlace de la imagen por tu propio QR -->
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE-O-PLIN-BARBERIA-BARBAROS" alt="Código QR de Pago">
+                </div>
+
+                <p style="color: #27ae60; font-size: 13px; font-weight: bold; margin-top: 5px;">Número: 996 887 022</p>
+                <p style="color: #aaa; font-size: 11px; margin-top: 3px;">Titular: Barbería Bárbaros</p>
             </div>
         </div>
 
