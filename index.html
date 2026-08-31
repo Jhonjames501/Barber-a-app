@@ -526,7 +526,6 @@
                 <p class="qr-instructions">Escanea el código con tu celular para realizar el pago rápido de tu servicio:</p>
                 
                 <div class="qr-box">
-                    <!-- Aquí puedes cambiar el enlace de la imagen por tu propio QR -->
                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE-O-PLIN-BARBERIA-BARBAROS" alt="Código QR de Pago">
                 </div>
 
@@ -586,7 +585,7 @@
             }
         });
 
-        // Estado del negocio
+        // Verificador de horario del negocio (Abierto de 10:00 AM a 9:00 PM)
         const ahora = new Date();
         const horaActual = ahora.getHours();
         const badgeEstado = document.getElementById('estadoNegocio');
@@ -599,7 +598,7 @@
             badgeEstado.className = "badge closed";
         }
 
-        // Manejo del formulario y WhatsApp
+        // Manejo del formulario de reservas y enlace a WhatsApp
         const form = document.getElementById('reservaForm');
         const modal = document.getElementById('modalConfirmacion');
         const btnEntendido = document.getElementById('btnEntendido');
@@ -634,6 +633,7 @@
             window.open(enlaceWhatsAppGlobal, '_blank');
         });
 
+        // Botón para compartir la app
         document.getElementById('btnCompartir').addEventListener('click', async function() {
             const shareData = {
                 title: 'Barbería Bárbaros',
@@ -646,13 +646,12 @@
                     await navigator.share(shareData);
                 } else {
                     const mensaje = encodeURIComponent("¡Reserva tu cita en Barbería Bárbaros aquí: " + window.location.href + " !");
-                    window.open("https://api.whatsapp.com/send?text=" + mensaje, "_blank");
+                    window.open(`https://api.whatsapp.com/send?text=${mensaje}`, '_blank');
                 }
             } catch (err) {
-                console.log("Error al compartir: ", err);
+                console.log("Error al compartir", err);
             }
         });
     </script>
-
 </body>
 </html>
