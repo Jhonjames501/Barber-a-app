@@ -12,63 +12,67 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background-color: #0b0b0b;
-            color: #f1f1f1;
-            padding: 15px;
-            background-image: radial-gradient(circle at center, #1c1c1c 0%, #0b0b0b 100%);
-        }
-        .container {
-            max-width: 420px;
-            margin: 0 auto;
-            background: #121212;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
-            border: 1px solid #d4af37;
+            background-color: #f2f2f2;
+            color: #111;
+            height: 100vh;
+            overflow: hidden;
             position: relative;
         }
-        
-        /* Botón de menú en la esquina superior izquierda */
+
+        /* Fondo simulando el Mapa de InDrive */
+        .map-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: #e8eaed;
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 1;
+        }
+        /* Líneas de calles simuladas */
+        .street-1 { position: absolute; top: 30%; left: -10%; width: 120%; height: 12px; background: #fff; transform: rotate(-15deg); border-top: 2px solid #ddd; border-bottom: 2px solid #ddd; }
+        .street-2 { position: absolute; top: 15%; left: 0%; width: 100%; height: 15px; background: #fff; transform: rotate(35deg); border-top: 2px solid #ddd; border-bottom: 2px solid #ddd; }
+        .pin-local { position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%); background: #121212; color: #d4af37; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; border: 2px solid #d4af37; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 2; display: flex; align-items: center; gap: 5px; }
+
+        /* Botón de Menú Flotante Superior Izquierdo */
         .menu-toggle-btn {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            background: #1a1a1a;
-            border: 1px solid #d4af37;
-            color: #d4af37;
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
+            top: 15px;
+            left: 15px;
+            background: #fff;
+            border: none;
+            color: #111;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             z-index: 20;
-            transition: background 0.2s;
-        }
-        .menu-toggle-btn:hover {
-            background: #d4af37;
-            color: #0b0b0b;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        /* Menú desplegable flotante */
+        /* Menú Desplegable */
         .dropdown-menu {
             display: none;
             position: absolute;
-            top: 65px;
-            left: 20px;
+            top: 70px;
+            left: 15px;
             background: #181818;
             border: 1px solid #d4af37;
-            border-radius: 10px;
-            width: 230px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+            border-radius: 12px;
+            width: 220px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
             z-index: 30;
             overflow: hidden;
         }
-        .dropdown-menu.show {
-            display: block;
-        }
+        .dropdown-menu.show { display: block; }
         .menu-item {
             padding: 12px 15px;
             color: #ddd;
@@ -79,665 +83,298 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: background 0.2s, color 0.2s;
         }
-        .menu-item:last-child {
-            border-bottom: none;
-        }
-        .menu-item:hover, .menu-item.active {
-            background: #d4af37;
-            color: #0b0b0b;
-        }
+        .menu-item:hover, .menu-item.active { background: #d4af37; color: #0b0b0b; }
 
-        .brand-header {
-            text-align: center;
-            margin-bottom: 15px;
-            padding-top: 5px;
-        }
-        h1 {
-            color: #e5c158;
-            font-size: 26px;
-            letter-spacing: 1px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-        p.subtitle {
-            color: #bfa143;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-
-        .section-view {
-            display: none;
-        }
-        .section-view.active {
-            display: block;
-        }
-
-        .status-badge {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .open { background-color: #27ae60; color: #fff; }
-        .closed { background-color: #c0392b; color: #fff; }
-
-        /* Estilo Radar de Cercanía (InDrive para ir al local) */
-        .indrive-map-box {
-            background: #171717;
-            border: 1px solid #d4af37;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        .radar-animation {
-            width: 70px;
-            height: 70px;
-            border: 2px dashed #d4af37;
-            border-radius: 50%;
-            margin: 10px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: pulse-radar 2s infinite linear;
-        }
-        .radar-animation span {
-            font-size: 22px;
-        }
-        @keyframes pulse-radar {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-            70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(212, 175, 55, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-        }
-
-        .shop-radar-card {
-            background: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 10px;
-            text-align: left;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .shop-radar-info h5 {
-            color: #e5c158;
-            font-size: 13px;
-            margin-bottom: 3px;
-        }
-        .shop-radar-info p {
-            color: #aaa;
-            font-size: 11px;
-            line-height: 1.3;
-        }
-        .btn-ir-local {
-            background: #d4af37;
-            color: #0b0b0b;
-            border: none;
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        /* Banner de Fidelización */
-        .loyalty-banner {
-            background: linear-gradient(135deg, #1a1710, #111111);
-            border: 1px solid #d4af37;
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .loyalty-banner h3 {
-            color: #e5c158;
-            font-size: 14px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-        }
-        .loyalty-banner p {
-            color: #ccc;
-            font-size: 12px;
-            line-height: 1.4;
-            text-align: left;
-            padding-left: 5px;
-        }
-
-        /* Tarjeta Interactiva de Sellos */
-        .stamp-card-box {
-            background: #171717;
-            border: 1px solid #d4af37;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .stamp-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .stamp-item {
-            background: #222;
-            border: 1px dashed #d4af37;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            color: #d4af37;
-            font-weight: bold;
-        }
-        .stamp-item.active {
-            background: #d4af37;
-            color: #121212;
-            border-style: solid;
-        }
-
-        /* Catálogo de cortes */
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .catalog-card {
-            background: #181818;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .catalog-info h4 {
-            color: #e5c158;
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-        .catalog-info p {
-            color: #aaa;
-            font-size: 12px;
-        }
-        .catalog-price {
-            color: #27ae60;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        /* Sección de Pago QR */
-        .qr-container {
-            background: #171717;
-            border: 1px solid #d4af37;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        .qr-box {
+        /* Barra Superior Estilo InDrive (Origen) */
+        .top-location-card {
+            position: absolute;
+            top: 15px;
+            left: 70px;
+            right: 15px;
             background: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            display: inline-block;
-            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            border: 1px solid #eee;
         }
-        .qr-box img {
-            width: 150px;
-            height: 150px;
-            object-fit: contain;
+        .top-location-card span.label { font-size: 10px; color: #888; font-weight: bold; text-transform: uppercase; }
+        .top-location-card span.address { font-size: 13px; color: #111; font-weight: bold; }
+
+        /* Panel Deslizable Inferior Estilo InDrive */
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 52%;
+            background: #fff;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
+            z-index: 15;
+            padding: 20px;
+            overflow-y: auto;
         }
-        .qr-instructions {
-            color: #ccc;
-            font-size: 12px;
-            margin-bottom: 10px;
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: #ccc;
+            border-radius: 2px;
+            margin: 0 auto 15px auto;
         }
 
-        .form-group {
-            margin-bottom: 12px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 12px;
-            color: #d4af37;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #333;
-            background: #1a1a1a;
-            color: #fff;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #d4af37;
-        }
-        textarea {
-            resize: none;
-            height: 55px;
-        }
-        button.main-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #d4af37, #aa820a);
-            border: none;
-            color: #0b0b0b;
-            font-weight: bold;
-            font-size: 14px;
-            border-radius: 8px;
+        /* Buscador Principal */
+        .search-bar-indrive {
+            background: #f4f4f4;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             cursor: pointer;
-            margin-top: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 15px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
         }
-        button.main-btn:hover {
-            opacity: 0.9;
+        .search-bar-indrive span.icon { font-size: 18px; }
+        .search-bar-indrive span.text { font-size: 14px; color: #441; font-weight: bold; color: #333; }
+
+        /* Historial de Locales Cercanos / Sugeridos */
+        .location-history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
         }
-        .payment-methods {
-            text-align: center;
-            margin: 10px 0;
-            font-size: 11px;
-            color: #aaa;
+        .location-history-item:last-child { border-bottom: none; }
+        .history-icon {
+            background: #f0f0f0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
         }
-        .modal {
+        .history-details h4 { font-size: 13px; color: #111; margin-bottom: 2px; }
+        .history-details p { font-size: 11px; color: #666; }
+
+        /* Categorías / Opciones Inferiores */
+        .grid-categories {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .category-card {
+            background: #f8f8f8;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 80px;
+            cursor: pointer;
+        }
+        .category-card h5 { font-size: 12px; color: #111; }
+        .category-card span { font-size: 18px; align-self: flex-end; }
+
+        /* Vistas Ocultas de la App (Catálogo, Reservas, etc.) */
+        .app-full-view {
             display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
+            position: absolute;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #161616;
+            background: #121212;
+            z-index: 100;
             padding: 20px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 330px;
-            text-align: center;
-            border: 2px solid #d4af37;
+            overflow-y: auto;
+            color: #fff;
         }
-        .modal-content h2 {
-            color: #e5c158;
-            margin-bottom: 8px;
-            font-size: 18px;
-        }
-        .modal-content p {
-            color: #ddd;
-            font-size: 13px;
-            margin-bottom: 15px;
-        }
-        .modal-btn {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            text-transform: uppercase;
-        }
-        .info-section {
-            margin-top: 20px;
-            border-top: 1px solid #222;
-            padding-top: 12px;
-            text-align: center;
-        }
-        .social-buttons {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        .btn-social, .btn-map {
-            flex: 1;
-            padding: 8px;
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            color: #d4af37;
-            border-radius: 6px;
-            font-size: 11px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: 600;
-        }
-        .btn-share {
-            background: transparent;
-            border: 2px solid #d4af37;
-            color: #d4af37;
-            padding: 8px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            width: 100%;
-            text-transform: uppercase;
-        }
+        .app-full-view.active { display: block; }
+        .back-btn { background: #222; border: 1px solid #d4af37; color: #d4af37; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; }
+
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-size: 12px; color: #d4af37; font-weight: 600; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #333; background: #1a1a1a; color: #fff; border-radius: 8px; font-size: 14px; }
+        button.main-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #d4af37, #aa820a); border: none; color: #0b0b0b; font-weight: bold; font-size: 14px; border-radius: 8px; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <button class="menu-toggle-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
+    <!-- MAPA DE FONDO ESTILO INDRIVE -->
+    <div class="map-background">
+        <div class="street-1"></div>
+        <div class="street-2"></div>
+        <div class="pin-local">✂️ Bárbaros Central (Abierto)</div>
+    </div>
 
-        <div class="dropdown-menu" id="dropdownMenu">
-            <div class="menu-item active" onclick="seleccionarOpcion('reserva', this)">📅 Reservar Cita</div>
-            <div class="menu-item" onclick="seleccionarOpcion('radar', this)">📍 Buscar Local Cercano (Radar)</div>
-            <div class="menu-item" onclick="seleccionarOpcion('fidelidad', this)">⭐ Tarjeta de Sellos</div>
-            <div class="menu-item" onclick="seleccionarOpcion('catalogo', this)">✂️ Precios y Cortes</div>
-            <div class="menu-item" onclick="seleccionarOpcion('pagos', this)">💳 Pagos y QR</div>
+    <!-- BOTÓN MENÚ FLOTANTE -->
+    <button class="menu-toggle-btn" onclick="toggleMenu()">☰</button>
+
+    <!-- MENÚ DESPLEGABLE -->
+    <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-item" onclick="abrirVista('vista-reserva')">📅 Reservar Cita</div>
+        <div class="menu-item" onclick="cerrarVistas()">📍 Mapa de Ubicación</div>
+        <div class="menu-item" onclick="abrirVista('vista-catalogo')">✂️ Precios y Catálogo</div>
+        <div class="menu-item" onclick="abrirVista('vista-pagos')">💳 Yape / Plin / QR</div>
+    </div>
+
+    <!-- TARJETA SUPERIOR DE UBICACIÓN (DE DÓNDE) -->
+    <div class="top-location-card">
+        <span class="label">Tu ubicación actual</span>
+        <span class="address">📍 Carabayllo, Lima Norte</span>
+    </div>
+
+    <!-- PANEL INFERIOR DESLIZABLE ESTILO INDRIVE -->
+    <div class="bottom-sheet">
+        <div class="sheet-handle"></div>
+
+        <!-- Buscador Principal -->
+        <div class="search-bar-indrive" onclick="abrirVista('vista-reserva')">
+            <span class="icon">🔍</span>
+            <span class="text">¿Qué servicio necesitas hoy?</span>
         </div>
 
-        <div class="brand-header">
-            <h1>Bárbaros</h1>
-            <p class="subtitle">Tu Corte - Tu Estilo</p>
-        </div>
+        <!-- Locales Cercanos Activos -->
+        <div style="font-size: 12px; font-weight: bold; color: #555; margin-bottom: 8px; text-transform: uppercase;">Locales Activos Cerca</div>
 
-        <div id="seccion-reserva" class="section-view active">
-            <div class="status-badge">
-                <span id="estadoNegocio" class="badge">Verificando horario...</span>
-            </div>
-
-            <form id="reservaForm">
-                <div class="form-group">
-                    <label for="nombre">Tu nombre:</label>
-                    <input type="text" id="nombre" required placeholder="Ej. Carlos Pérez">
-                </div>
-
-                <div class="form-group">
-                    <label for="barbero">Selecciona al Barbero:</label>
-                    <select id="barbero">
-                        <option value="Cualquier Barbero / El que esté libre">Cualquier Barbero</option>
-                        <option value="Barbero Principal">Barbero Principal</option>
-                        <option value="Jhon (Tu Barbero)">Jhon</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="servicio">Selecciona el Servicio:</label>
-                    <select id="servicio">
-                        <option value="Corte Escolar / Niños - S/ 15">Corte Escolar / Niños - S/ 15</option>
-                        <option value="Corte Clásico - S/ 20">Corte Clásico - S/ 20</option>
-                        <option value="Fade / Degradado - S/ 25">Fade / Degradado - S/ 25</option>
-                        <option value="Corte + Barba - S/ 35">Corte + Barba - S/ 35</option>
-                        <option value="Corte + Cejas - S/ 28">Corte + Cejas - S/ 28</option>
-                        <option value="Diseño / Barbería Completa - S/ 45">Diseño / Barbería Completa - S/ 45</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="fecha">Fecha de la Cita:</label>
-                    <input type="date" id="fecha" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="hora">Hora Disponible:</label>
-                    <select id="hora">
-                        <option value="11:00 AM">11:00 AM</option>
-                        <option value="12:00 PM">12:00 PM</option>
-                        <option value="01:00 PM">01:00 PM</option>
-                        <option value="02:00 PM">02:00 PM</option>
-                        <option value="03:00 PM">03:00 PM</option>
-                        <option value="04:00 PM">04:00 PM</option>
-                        <option value="05:00 PM">05:00 PM</option>
-                        <option value="06:00 PM">06:00 PM</option>
-                        <option value="07:00 PM">07:00 PM</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="nota">Observación (Opcional):</label>
-                    <textarea id="nota" placeholder="Ej. Con diseño de raya..."></textarea>
-                </div>
-
-                <div class="payment-methods">
-                    💳 Aceptamos: Efectivo, Yape y Plin
-                </div>
-
-                <button type="submit" class="main-btn">Reservar por WhatsApp</button>
-            </form>
-        </div>
-
-        <div id="seccion-radar" class="section-view">
-            <div class="indrive-map-box">
-                <h3 style="color: #e5c158; font-size: 15px; text-transform: uppercase;">Buscando Locales Abiertos</h3>
-                <p style="color: #aaa; font-size: 11px; margin-top: 4px;">Detectando barberías activas cerca de tu ubicación actual...</p>
-
-                <div class="radar-animation">
-                    <span>📍</span>
-                </div>
-
-                <p style="color: #27ae60; font-size: 12px; font-weight: bold;">¡2 Barberías Bárbaros disponibles cerca!</p>
-
-                <div class="shop-radar-card">
-                    <div class="shop-radar-info">
-                        <h5>Bárbaros - Central Carabayllo</h5>
-                        <p>🟢 Abierto • A 4 cuadras (5 min)</p>
-                        <p style="color: #d4af37;">S/ 20 el Fade • Sin cola</p>
-                    </div>
-                    <button class="btn-ir-local" onclick="irAlLocal('Carabayllo Central')">Ir al Local</button>
-                </div>
-
-                <div class="shop-radar-card">
-                    <div class="shop-radar-info">
-                        <h5>Bárbaros - Sucursal Norte</h5>
-                        <p>🟢 Abierto • A 8 cuadras (10 min)</p>
-                        <p style="color: #d4af37;">S/ 20 el Fade • 1 persona en espera</p>
-                    </div>
-                    <button class="btn-ir-local" onclick="irAlLocal('Sucursal Norte')">Ir al Local</button>
-                </div>
+        <div class="location-history-item" onclick="irAlLocal('Bárbaros Central')">
+            <div class="history-icon">💈</div>
+            <div class="history-details">
+                <h4>Bárbaros - Central Carabayllo</h4>
+                <p>🟢 Abierto • A 4 cuadras • S/ 20 Fade</p>
             </div>
         </div>
 
-        <div id="seccion-fidelidad" class="section-view">
-            <div class="loyalty-banner">
-                <h3>★ Recompensamos tu Fidelidad ★</h3>
-                <p>
-                    • <b>1er regalo:</b> Corte con 50% de descuento o facial gratis.<br>
-                    • <b>2do regalo:</b> Corte gratis / cera / facial gratis.
-                </p>
-            </div>
-
-            <div class="stamp-card-box">
-                <p style="color: #e5c158; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Tus Sellos Acumulados</p>
-                <p style="color: #888; font-size: 11px;">Muestra esta pantalla en tu visita para sellar tu tarjeta.</p>
-                
-                <div class="stamp-grid">
-                    <div class="stamp-item active">✓ 1</div>
-                    <div class="stamp-item active">✓ 2</div>
-                    <div class="stamp-item">3</div>
-                    <div class="stamp-item">🎁 4</div>
-                </div>
+        <div class="location-history-item" onclick="irAlLocal('Sucursal Norte')">
+            <div class="history-icon">✂️</div>
+            <div class="history-details">
+                <h4>Bárbaros - Sucursal Norte</h4>
+                <p>🟢 Abierto • A 8 cuadras • Sin espera</p>
             </div>
         </div>
 
-        <div id="seccion-catalogo" class="section-view">
-            <div class="catalog-grid">
-                <div class="catalog-card">
-                    <div class="catalog-info">
-                        <h4>Corte Clásico</h4>
-                        <p>Corte tradicional con acabado limpio.</p>
-                    </div>
-                    <div class="catalog-price">S/ 20</div>
-                </div>
-                <div class="catalog-card">
-                    <div class="catalog-info">
-                        <h4>Fade / Degradado</h4>
-                        <p>Estilo moderno difuminado al ras.</p>
-                    </div>
-                    <div class="catalog-price">S/ 25</div>
-                </div>
-                <div class="catalog-card">
-                    <div class="catalog-info">
-                        <h4>Corte + Barba</h4>
-                        <p>Perfilado completo y ritual de barba.</p>
-                    </div>
-                    <div class="catalog-price">S/ 35</div>
-                </div>
-                <div class="catalog-card">
-                    <div class="catalog-info">
-                        <h4>Corte Escolar / Niños</h4>
-                        <p>Especial para los más jóvenes.</p>
-                    </div>
-                    <div class="catalog-price">S/ 15</div>
-                </div>
+        <!-- Categorías Estilo InDrive -->
+        <div class="grid-categories">
+            <div class="category-card" onclick="abrirVista('vista-catalogo')">
+                <h5>Ver Cortes y Precios</h5>
+                <span>📋</span>
             </div>
-        </div>
-
-        <div id="seccion-pagos" class="section-view">
-            <div class="qr-container">
-                <h3 style="color: #e5c158; font-size: 15px; margin-bottom: 5px; text-transform: uppercase;">Yape / Plin / QR</h3>
-                <p class="qr-instructions">Escanea el código con tu celular para realizar el pago rápido de tu servicio:</p>
-                
-                <div class="qr-box">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE-O-PLIN-BARBERIA-BARBAROS" alt="Código QR de Pago">
-                </div>
-
-                <p style="color: #27ae60; font-size: 13px; font-weight: bold; margin-top: 5px;">Número: 996 887 022</p>
-                <p style="color: #aaa; font-size: 11px; margin-top: 3px;">Titular: Barbería Bárbaros</p>
-            </div>
-        </div>
-
-        <div class="info-section">
-            <div class="social-buttons">
-                <a href="https://maps.google.com" target="_blank" class="btn-map">Ubicación 🗺️</a>
-                <a href="https://instagram.com" target="_blank" class="btn-social">Instagram 📷</a>
-            </div>
-            <div style="margin-top: 8px;">
-                <button type="button" class="btn-share" id="btnCompartir">Compartir App 📤</button>
+            <div class="category-card" onclick="abrirVista('vista-pagos')">
+                <h5>Pagos QR (Yape)</h5>
+                <span>💳</span>
             </div>
         </div>
     </div>
 
-    <div id="modalConfirmacion" class="modal">
-        <div class="modal-content">
-            <h2>¡Cita Lista! 🎉</h2>
-            <p id="modalTexto">Estamos abriendo WhatsApp...</p>
-            <button class="modal-btn" id="btnEntendido">Continuar</button>
+    <!-- VISTA INTERNA: RESERVAS -->
+    <div id="vista-reserva" class="app-full-view">
+        <button class="back-btn" onclick="cerrarVistas()">← Volver al Mapa</button>
+        <h2 style="color: #e5c158; font-size: 20px; margin-bottom: 15px;">Reservar en Local Cercano</h2>
+        
+        <form id="reservaForm">
+            <div class="form-group">
+                <label>Tu Nombre:</label>
+                <input type="text" id="nombre" required placeholder="Ej. Carlos">
+            </div>
+            <div class="form-group">
+                <label>Servicio:</label>
+                <select id="servicio">
+                    <option value="Fade / Degradado - S/ 25">Fade / Degradado - S/ 25</option>
+                    <option value="Corte Clásico - S/ 20">Corte Clásico - S/ 20</option>
+                    <option value="Corte + Barba - S/ 35">Corte + Barba - S/ 35</option>
+                    <option value="Corte Escolar - S/ 15">Corte Escolar - S/ 15</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Hora:</label>
+                <select id="hora">
+                    <option value="Inmediato (En camino)">Inmediato (En camino)</option>
+                    <option value="En 15 minutos">En 15 minutos</option>
+                    <option value="En 30 minutos">En 30 minutos</option>
+                </select>
+            </div>
+            <button type="submit" class="main-btn">Confirmar y Abrir WhatsApp</button>
+        </form>
+    </div>
+
+    <!-- VISTA INTERNA: CATÁLOGO -->
+    <div id="vista-catalogo" class="app-full-view">
+        <button class="back-btn" onclick="cerrarVistas()">← Volver al Mapa</button>
+        <h2 style="color: #e5c158; font-size: 20px; margin-bottom: 15px;">Precios de Servicios</h2>
+        <div style="background: #1a1a1a; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333;">
+            <h4 style="color: #e5c158;">Fade / Degradado</h4>
+            <p style="color: #aaa; font-size: 12px;">Moderno difuminado al ras</p>
+            <p style="color: #27ae60; font-weight: bold; margin-top: 5px;">S/ 25</p>
         </div>
+        <div style="background: #1a1a1a; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333;">
+            <h4 style="color: #e5c158;">Corte Clásico</h4>
+            <p style="color: #aaa; font-size: 12px;">Tradicional y limpio</p>
+            <p style="color: #27ae60; font-weight: bold; margin-top: 5px;">S/ 20</p>
+        </div>
+    </div>
+
+    <!-- VISTA INTERNA: PAGOS -->
+    <div id="vista-pagos" class="app-full-view" style="text-align: center;">
+        <button class="back-btn" onclick="cerrarVistas()" style="float: left;">← Volver</button>
+        <div style="clear: both; height: 10px;"></div>
+        <h2 style="color: #e5c158; font-size: 20px; margin-bottom: 15px;">Yape y Plin</h2>
+        <div style="background: #fff; padding: 15px; border-radius: 12px; display: inline-block; margin-bottom: 15px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE-BARBERIA-BARBAROS" alt="QR" style="width: 140px; height: 140px;">
+        </div>
+        <p style="color: #27ae60; font-size: 15px; font-weight: bold;">Número: 996 887 022</p>
+        <p style="color: #aaa; font-size: 12px; margin-top: 5px;">Titular: Barbería Bárbaros</p>
     </div>
 
     <script>
-        document.getElementById('fecha').valueAsDate = new Date();
-
         function toggleMenu() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.classList.toggle('show');
+            document.getElementById('dropdownMenu').classList.toggle('show');
         }
 
-        function seleccionarOpcion(seccionId, elemento) {
-            document.querySelectorAll('.section-view').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-
-            document.getElementById('seccion-' + seccionId).classList.add('active');
-            elemento.classList.add('active');
-            
+        function abrirVista(vistaId) {
+            document.querySelectorAll('.app-full-view').forEach(v => v.classList.remove('active'));
+            document.getElementById(vistaId).classList.add('active');
             document.getElementById('dropdownMenu').classList.remove('show');
         }
 
+        function cerrarVistas() {
+            document.querySelectorAll('.app-full-view').forEach(v => v.classList.remove('active'));
+            document.getElementById('dropdownMenu').classList.remove('show');
+        }
+
+        function irAlLocal(nombreLocal) {
+            const texto = encodeURIComponent(`Hola, vi el local ${nombre} en el mapa de la app y voy en camino para atenderme.`);
+            window.open(`https://wa.me/51996887022?text=${texto}`, '_blank');
+        }
+
+        document.getElementById('reservaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const servicio = document.getElementById('servicio').value;
+            const hora = document.getElementById('hora').value;
+            
+            const texto = encodeURIComponent(`Hola, soy *${nombre}*. Quiero reservar el servicio de *${servicio* }* con llegada: *${hora}*.`);
+            window.open(`https://wa.me/51996887022?text=${texto}`, '_blank');
+        });
+
         window.addEventListener('click', function(e) {
             const menu = document.getElementById('dropdownMenu');
-            const btn = document.getElementById('menuBtn');
+            const btn = document.querySelector('.menu-toggle-btn');
             if (!menu.contains(e.target) && !btn.contains(e.target)) {
                 menu.classList.remove('show');
             }
         });
-
-        // Función para guiar al cliente hacia el local seleccionado
-        function irAlLocal(nombreLocal) {
-            const numeroWhatsApp = "51996887022";
-            const texto = encodeURIComponent(`Hola, estoy buscando llegar al local ${nombreLocal} que vi en el radar de la app. ¿Me confirman si hay espacio para atenderme ahora?`);
-            window.open(`https://wa.me/${numeroWhatsApp}?text=${texto}`, '_blank');
-        }
-
-        const ahora = new Date();
-        const horaActual = ahora.getHours();
-        const badgeEstado = document.getElementById('estadoNegocio');
-        
-        if (horaActual >= 10 && horaActual < 21) {
-            badgeEstado.textContent = "🟢 Abierto Ahora";
-            badgeEstado.className = "badge open";
-        } else {
-            badgeEstado.textContent = "🔴 Cerrado (Agenda para mañana)";
-            badgeEstado.className = "badge closed";
-        }
-
-        const form = document.getElementById('reservaForm');
-        const modal = document.getElementById('modalConfirmacion');
-        const btnEntendido = document.getElementById('btnEntendido');
-        let enlaceWhatsAppGlobal = "";
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const nombre = document.getElementById('nombre').value;
-            const barbero = document.getElementById('barbero').value;
-            const servicio = document.getElementById('servicio').value;
-            const fecha = document.getElementById('fecha').value;
-            const hora = document.getElementById('hora').value;
-            const nota = document.getElementById('nota').value;
-
-            const numeroWhatsApp = "51996887022"; 
-
-            let texto = `Hola, quiero reservar una cita.%0A%0A*Cliente:* ${nombre}%0A*Barbero:* ${barbero}%0A*Servicio:* ${servicio}%0A*Fecha:* ${fecha}%0A*Hora:* ${hora}`;
-            
-            if (nota) {
-                texto += `%0A*Nota:* ${nota}`;
-            }
-            
-            enlaceWhatsAppGlobal = `https://wa.me/${numeroWhatsApp}?text=${texto}`;
-            
-            document.getElementById('modalTexto').innerHTML = `¡Gracias <b>${nombre}</b>! Tu reserva para <b>${servicio}</b> está lista.`;
-            modal.style.display = "flex";
-        });
-
-        btnEntendido.addEventListener('click', function() {
-            modal.style.display = "none";
-            window.open(enlaceWhatsAppGlobal, '_blank');
-        });
-
-        document.getElementById('btnCompartir').addEventListener('click', async function() {
-            const shareData = {
-                title: 'Barbería Bárbaros',
-                text: '¡Reserva tu corte de cabello en la Barbería Bárbaros!',
-                url: window.location.href
-            };
-
-            try {
-                if (navigator.share) {
-                    await navigator.share(shareData);
-                } else {
-                    const mensaje = encodeURIComponent("¡Reserva tu cita en Barbería Bárbaros aquí: " + window.location.href + " !");
-                    window.open("https://api.whatsapp.com/send?text=" + mensaje, "_blank");
-                }
-            } catch (err) {
-                console.log("Error al compartir: ", err);
-            }
-        });
     </script>
-
 </body>
 </html>
