@@ -69,6 +69,27 @@
         button:hover {
             background-color: #e08e0b;
         }
+        .share-container {
+            text-align: center;
+            margin-top: 20px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+        .btn-share {
+            background-color: transparent;
+            border: 2px solid #f39c12;
+            color: #f39c12;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-share:hover {
+            background-color: #f39c12;
+            color: #121212;
+        }
     </style>
 </head>
 <body>
@@ -113,6 +134,10 @@
 
             <button type="submit">Reservar por WhatsApp</button>
         </form>
+
+        <div class="share-container">
+            <button type="button" class="btn-share" id="btnCompartir">Compartir Aplicación 📤</button>
+        </div>
     </div>
 
     <script>
@@ -125,12 +150,32 @@
             const servicio = document.getElementById('servicio').value;
             const hora = document.getElementById('hora').value;
 
-            // PON AQUÍ EL NÚMERO DE TU PRIMO (código 51 para Perú)
+            // NÚMERO CONFIGURADO
             const numeroWhatsApp = "51996887022"; 
 
             const texto = `Hola, quiero reservar una cita.%0A%0A*Cliente:* ${nombre}%0A*Servicio:* ${servicio}%0A*Hora:* ${hora}`;
             
             window.open(`https://wa.me/${numeroWhatsApp}?text=${texto}`, '_blank');
+        });
+
+        // Función para el botón de compartir
+        document.getElementById('btnCompartir').addEventListener('click', async function() {
+            const shareData = {
+                title: 'Barbería BARBAROS',
+                text: '¡Reserva tu corte de cabello fácilmente en la Barbería BARBAROS!',
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    const mensaje = encodeURIComponent("¡Reserva tu cita en Barbería BARBAROS aquí: " + window.location.href + " !");
+                    window.open("https://api.whatsapp.com/send?text=" + mensaje, "_blank");
+                }
+            } catch (err) {
+                console.log("Error al compartir: ", err);
+            }
         });
     </script>
 
