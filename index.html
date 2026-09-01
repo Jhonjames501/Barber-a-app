@@ -8,7 +8,7 @@
     <!-- SDKs de Firebase (Versión Modular oficial con Auth y Firestore) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-        import { getFirestore, collection } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
         import { getAuth, FacebookAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
         // Configuración oficial de tu base de datos de Firebase
@@ -30,6 +30,12 @@
         window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.updateProfile = updateProfile;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        window.setDoc = setDoc;
+        window.onSnapshot = onSnapshot;
+        window.collection = collection;
+        window.addDoc = addDoc;
     </script>
 
     <style>
@@ -137,13 +143,12 @@
         .section-view.active {
             display: block;
         }
-        /* Pantalla de bloqueo inicial (Login obligatorio) */
         #pantalla-login {
             text-align: center;
             padding: 10px 0;
         }
         #app-contenido {
-            display: none; /* Oculto hasta que inicie sesión */
+            display: none;
         }
         .status-badge {
             text-align: center;
@@ -206,8 +211,6 @@
             font-size: 11px;
             color: #d4af37;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
         }
         .stamp-item.active {
             background: #d4af37;
@@ -454,7 +457,7 @@
 <body>
 
     <div class="container">
-        <!-- PANTALLA 1: LOGIN OBLIGATORIO AL ABRIR -->
+        <!-- PANTALLA 1: LOGIN OBLIGATORIO -->
         <div id="pantalla-login">
             <div class="brand-header">
                 <h1>Bárbaros</h1>
@@ -480,7 +483,7 @@
             </div>
         </div>
 
-        <!-- PANTALLA 2: CONTENIDO DE LA APP (OCULTO HASTA INICIAR SESIÓN) -->
+        <!-- PANTALLA 2: CONTENIDO DE LA APP -->
         <div id="app-contenido">
             <button class="menu-toggle-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
 
@@ -562,23 +565,23 @@
                 </form>
             </div>
 
-            <!-- SECCIÓN 2: FIDELIZACIÓN -->
+            <!-- SECCIÓN 2: FIDELIZACIÓN (CONECTADA A FIRESTORE) -->
             <div id="seccion-fidelidad" class="section-view">
                 <div class="loyalty-banner">
                     <h3>★ Recompensamos tu Fidelidad ★</h3>
                     <p>
-                        • <b>1er regalo:</b> Corte con 50% de descuento o facial gratis.<br>
-                        • <b>2do regalo:</b> Corte gratis / cera / facial gratis.
+                        • <b>1er/2do sello:</b> Acumula para tus beneficios.<br>
+                        • <b>4to sello:</b> ¡Premio sorpresa de la barbería!
                     </p>
                 </div>
                 <div class="stamp-card-box">
                     <p style="color: #e5c158; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Tus Sellos Acumulados</p>
-                    <p style="color: #888; font-size: 11px;">Toca un sello para marcarlo o desmarcarlo.</p>
+                    <p style="color: #888; font-size: 11px;">Gestionado directamente por Bárbaros.</p>
                     <div class="stamp-grid">
-                        <div class="stamp-item" onclick="toggleStamp(0)">✓ 1</div>
-                        <div class="stamp-item" onclick="toggleStamp(1)">✓ 2</div>
-                        <div class="stamp-item" onclick="toggleStamp(2)">3</div>
-                        <div class="stamp-item" onclick="toggleStamp(3)">🎁 4</div>
+                        <div class="stamp-item" id="sello-0">1</div>
+                        <div class="stamp-item" id="sello-1">2</div>
+                        <div class="stamp-item" id="sello-2">3</div>
+                        <div class="stamp-item" id="sello-3">🎁 4</div>
                     </div>
                 </div>
             </div>
@@ -650,17 +653,53 @@
         </div>
     </div>
 
-    <!-- Script de lógica y autenticación -->
+    <!-- Script de lógica, base de datos y control de usuarios -->
     <script type="module">
-        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
-
         document.getElementById('fecha').valueAsDate = new Date();
 
-        // Función para mostrar la app completa tras iniciar sesión con éxito
-        function entrarALaApp(nombreUsuario) {
+        let unsubscribeSellos = null;
+
+        // Función para registrar o verificar al usuario en Firestore y escuchar sus sellos en tiempo real
+        async function gestionarUsuarioEnDB(user) {
+            const userRef = window.doc(window.db, "usuarios", user.uid);
+            const userSnap = await window.getDoc(userRef);
+
+            // Si es su primera vez, creamos su documento con 0 sellos
+            if (!userSnap.exists()) {
+                await window.setDoc(userRef, {
+                    nombre: user.displayName || user.email.split('@')[0],
+                    email: user.email || "Sin correo",
+                    sellos: [false, false, false, false],
+                    rol: "cliente"
+                });
+            }
+
+            // Escuchar cambios en tiempo real de los sellos de este usuario específico
+            if (unsubscribeSellos) unsubscribeSellos(); // Limpiar escucha anterior si la hubiera
+            unsubscribeSellos = window.onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const datos = docSnap.data();
+                    actualizarInterfazSellos(datos.sellos || [false, false, false, false]);
+                }
+            });
+
+            const nombreFinal = user.displayName || user.email.split('@')[0];
             document.getElementById('pantalla-login').style.display = 'none';
             document.getElementById('app-contenido').style.display = 'block';
-            document.getElementById('nombre').value = nombreUsuario;
+            document.getElementById('nombre').value = nombreFinal;
+        }
+
+        function actualizarInterfazSellos(estadoSellos) {
+            estadoSellos.forEach((marcado, index) => {
+                const elementoSello = document.getElementById(`sello-${index}`);
+                if (elementoSello) {
+                    if (marcado) {
+                        elementoSello.classList.add('active');
+                    } else {
+                        elementoSello.classList.remove('active');
+                    }
+                }
+            });
         }
 
         window.toggleMenu = function() {
@@ -683,20 +722,19 @@
             }
         });
 
-        // Lógica de inicio de sesión con Facebook
+        // Facebook Login
         document.getElementById('btnFacebook').addEventListener('click', async function() {
             try {
                 const provider = new window.FacebookAuthProvider();
                 const result = await window.signInWithPopup(window.auth, provider);
-                const user = result.user;
-                entrarALaApp(user.displayName);
+                await gestionarUsuarioEnDB(result.user);
             } catch (error) {
-                console.log("Error al iniciar sesión con Facebook: ", error);
+                console.log("Error Facebook: ", error);
                 alert("No se pudo iniciar sesión con Facebook.");
             }
         });
 
-        // Lógica de Registro con Correo y Contraseña
+        // Registro por Email
         document.getElementById('btnRegistrarEmail').addEventListener('click', async function() {
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
@@ -706,15 +744,13 @@
             }
             try {
                 const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, password);
-                const nombreSugerido = email.split('@')[0];
-                entrarALaApp(nombreSugerido);
+                await gestionarUsuarioEnDB(userCredential.user);
             } catch (error) {
-                console.log("Error al registrarse:", error);
                 alert("Error al registrarse: " + error.message);
             }
         });
 
-        // Lógica de Inicio de Sesión con Correo y Contraseña
+        // Iniciar Sesión por Email
         document.getElementById('btnLoginEmail').addEventListener('click', async function() {
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
@@ -724,14 +760,13 @@
             }
             try {
                 const userCredential = await window.signInWithEmailAndPassword(window.auth, email, password);
-                const nombreSugerido = email.split('@')[0];
-                entrarALaApp(nombreSugerido);
+                await gestionarUsuarioEnDB(userCredential.user);
             } catch (error) {
-                console.log("Error al iniciar sesión:", error);
                 alert("No se pudo iniciar sesión. Verifica tus datos.");
             }
         });
 
+        // Estado del negocio (Abierto/Cerrado)
         const ahora = new Date();
         const horaActual = ahora.getHours();
         const badgeEstado = document.getElementById('estadoNegocio');
@@ -743,22 +778,7 @@
             badgeEstado.className = "badge closed";
         }
 
-        window.cargarSellos = function() {
-            const sellosGuardados = JSON.parse(localStorage.getItem('barbaros_sellos') || "[false, false, false, false]");
-            document.querySelectorAll('.stamp-item').forEach((el, index) => {
-                if (sellosGuardados[index]) el.classList.add('active');
-                else el.classList.remove('active');
-            });
-        }
-
-        window.toggleStamp = function(index) {
-            let sellosGuardados = JSON.parse(localStorage.getItem('barbaros_sellos') || "[false, false, false, false]");
-            sellosGuardados[index] = !sellosGuardados[index];
-            localStorage.setItem('barbaros_sellos', JSON.stringify(sellosGuardados));
-            window.cargarSellos();
-        }
-        window.cargarSellos();
-
+        // Envío de reservas a la base de datos
         const form = document.getElementById('reservaForm');
         const modal = document.getElementById('modalConfirmacion');
         const btnEntendido = document.getElementById('btnEntendido');
@@ -776,14 +796,13 @@
 
             try {
                 if (window.db) {
-                    await addDoc(collection(window.db, "reservas"), {
+                    await window.addDoc(window.collection(window.db, "reservas"), {
                         nombre, barbero, servicio, fecha, hora, nota,
                         timestamp: new Date()
                     });
-                    console.log("Reserva guardada en Firebase exitosamente.");
                 }
             } catch (err) {
-                console.log("Error al guardar en Firebase: ", err);
+                console.log("Error al guardar reserva: ", err);
             }
 
             const numeroWhatsApp = "51996887022"; 
