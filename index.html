@@ -33,6 +33,7 @@
         window.doc = doc;
         window.getDoc = getDoc;
         window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
         window.onSnapshot = onSnapshot;
         window.collection = collection;
         window.addDoc = addDoc;
@@ -96,7 +97,7 @@
             background: #181818;
             border: 1px solid #d4af37;
             border-radius: 10px;
-            width: 230px;
+            width: 240px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.9);
             z-index: 30;
             overflow: hidden;
@@ -105,7 +106,7 @@
             display: block;
         }
         .menu-item {
-            padding: 12px 15px;
+            padding: 11px 15px;
             color: #ddd;
             font-size: 13px;
             font-weight: 600;
@@ -276,7 +277,7 @@
             padding: 6px;
             font-weight: bold;
         }
-        .admin-cita-card, .historial-cita-card {
+        .admin-cita-card, .historial-cita-card, .admin-usuario-card {
             background: #181818;
             border: 1px solid #d4af37;
             border-radius: 8px;
@@ -285,12 +286,25 @@
             font-size: 12px;
             text-align: left;
         }
-        .admin-cita-card p, .historial-cita-card p {
+        .admin-cita-card p, .historial-cita-card p, .admin-usuario-card p {
             margin-bottom: 3px;
             color: #ddd;
         }
-        .admin-cita-card b, .historial-cita-card b {
+        .admin-cita-card b, .historial-cita-card b, .admin-usuario-card b {
             color: #e5c158;
+        }
+        .btn-accion-admin {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 6px;
+            text-transform: uppercase;
+            margin-right: 4px;
         }
         .btn-eliminar-cita {
             background: #c0392b;
@@ -550,7 +564,8 @@
                 <div class="menu-item" onclick="seleccionarOpcion('fidelidad', this)">⭐ Tarjeta de Sellos</div>
                 <div class="menu-item" onclick="seleccionarOpcion('catalogo', this)">✂️ Precios y Cortes</div>
                 <div class="menu-item" onclick="seleccionarOpcion('lookbook', this)">📸 Lookbook / Galería</div>
-                <div class="menu-item" onclick="seleccionarOpcion('admin', this)">🛡️ Ver Citas (Admin)</div>
+                <div class="menu-item" onclick="seleccionarOpcion('adminCitas', this)">🛡️ Ver Citas (Admin)</div>
+                <div class="menu-item" onclick="seleccionarOpcion('adminSellos', this)">🏷️ Dar Sellos (Admin)</div>
                 <div class="menu-item" onclick="seleccionarOpcion('pagos', this)">💳 Pagos y QR</div>
             </div>
 
@@ -559,7 +574,7 @@
                 <p class="subtitle">Tu Corte - Tu Estilo</p>
             </div>
 
-            <!-- SECCIÓN 1: RESERVAS (CON CONTROL DE HORAS OCUPADAS) -->
+            <!-- SECCIÓN 1: RESERVAS -->
             <div id="seccion-reserva" class="section-view active">
                 <div class="status-badge">
                     <span id="estadoNegocio" class="badge">Verificando horario...</span>
@@ -625,7 +640,7 @@
                 </form>
             </div>
 
-            <!-- NUEVA SECCIÓN: MIS CITAS GUARDADAS (CLIENTE) -->
+            <!-- SECCIÓN: MIS CITAS GUARDADAS (CLIENTE) -->
             <div id="seccion-misCitas" class="section-view">
                 <div class="brand-header" style="margin-bottom: 10px;">
                     <h3 style="color: #e5c158; font-size: 15px; text-transform: uppercase;">Mis Citas Pendientes</h3>
@@ -648,12 +663,15 @@
                 </div>
                 <div class="stamp-card-box">
                     <p style="color: #e5c158; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Tus Sellos Acumulados</p>
-                    <p style="color: #888; font-size: 11px;">Gestionado directamente por Bárbaros.</p>
+                    <p style="color: #888; font-size: 11px;">Actualizado por tu barbero al instante.</p>
                     <div class="stamp-grid">
                         <div class="stamp-item" id="sello-0">1</div>
                         <div class="stamp-item" id="sello-1">2</div>
                         <div class="stamp-item" id="sello-2">3</div>
                         <div class="stamp-item" id="sello-3">🎁 4</div>
+                    </div>
+                    <div id="mensajePremio" style="display:none; margin-top: 10px;">
+                        <button type="button" class="main-btn" onclick="canjearPremioWhatsApp()" style="background: #27ae60; color: white; font-size: 12px; padding: 8px;">🎉 ¡Canjear Premio por WhatsApp!</button>
                     </div>
                 </div>
             </div>
@@ -719,7 +737,7 @@
             </div>
 
             <!-- PANEL ADMIN DE CITAS -->
-            <div id="seccion-admin" class="section-view">
+            <div id="seccion-adminCitas" class="section-view">
                 <div class="brand-header" style="margin-bottom: 10px;">
                     <h3 style="color: #e5c158; font-size: 15px; text-transform: uppercase;">Agenda de Citas</h3>
                     <p style="color: #aaa; font-size: 11px;">Listado de clientes reservados en la nube</p>
@@ -728,6 +746,21 @@
                     <p style="text-align: center; color: #888; font-size: 12px;">Cargando citas...</p>
                 </div>
                 <button type="button" class="main-btn" onclick="cargarCitasAdmin()" style="margin-top: 5px; background: #2980b9; color: white;">🔄 Actualizar Lista</button>
+            </div>
+
+            <!-- NUEVO PANEL ADMIN: DAR SELLOS A CLIENTES -->
+            <div id="seccion-adminSellos" class="section-view">
+                <div class="brand-header" style="margin-bottom: 10px;">
+                    <h3 style="color: #e5c158; font-size: 15px; text-transform: uppercase;">Gestión de Sellos</h3>
+                    <p style="color: #aaa; font-size: 11px;">Añade un sello al cliente cuando te pague su corte</p>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="buscarClienteInput" placeholder="Buscar por nombre o correo..." oninput="filtrarClientesAdmin()">
+                </div>
+                <div id="listaUsuariosAdmin" style="max-height: 300px; overflow-y: auto;">
+                    <p style="text-align: center; color: #888; font-size: 12px;">Cargando clientes registrados...</p>
+                </div>
+                <button type="button" class="main-btn" onclick="cargarUsuariosAdmin()" style="margin-top: 5px; background: #2980b9; color: white;">🔄 Actualizar Clientes</button>
             </div>
 
             <!-- SECCIÓN PAGOS Y QR -->
@@ -769,6 +802,7 @@
 
         let unsubscribeSellos = null;
         let usuarioActualUID = null;
+        let listaUsuariosCache = [];
 
         // Función para registrar o verificar al usuario en Firestore
         async function gestionarUsuarioEnDB(user) {
@@ -798,11 +832,11 @@
             document.getElementById('app-contenido').style.display = 'block';
             document.getElementById('nombre').value = nombreFinal;
 
-            // Verificar horas ocupadas al entrar
             verificarHorasOcupadas();
         }
 
         function actualizarInterfazSellos(estadoSellos) {
+            let completo = true;
             estadoSellos.forEach((marcado, index) => {
                 const elementoSello = document.getElementById(`sello-${index}`);
                 if (elementoSello) {
@@ -810,9 +844,23 @@
                         elementoSello.classList.add('active');
                     } else {
                         elementoSello.classList.remove('active');
+                        completo = false;
                     }
                 }
             });
+
+            const boxPremio = document.getElementById('mensajePremio');
+            if (completo && estadoSellos.length === 4 && estadoSellos.every(Boolean)) {
+                boxPremio.style.display = 'block';
+            } else {
+                boxPremio.style.display = 'none';
+            }
+        }
+
+        window.canjearPremioWhatsApp = function() {
+            const numeroWhatsApp = "51996887022";
+            const texto = "¡Hola! He completado mis 4 sellos en la app de Barbería Bárbaros y quiero canjear mi premio sorpresa / corte gratis. 🎁";
+            window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
         window.toggleMenu = function() {
@@ -826,8 +874,11 @@
             elemento.classList.add('active');
             document.getElementById('dropdownMenu').classList.remove('show');
 
-            if(seccionId === 'admin') {
+            if(seccionId === 'adminCitas') {
                 window.cargarCitasAdmin();
+            }
+            if(seccionId === 'adminSellos') {
+                window.cargarUsuariosAdmin();
             }
             if(seccionId === 'misCitas') {
                 window.cargarMisCitas();
@@ -845,13 +896,11 @@
             }
         });
 
-        // Función para bloquear automáticamente horas ya reservadas en la fecha seleccionada
         async function verificarHorasOcupadas() {
             const fechaSeleccionada = document.getElementById('fecha').value;
             const selectHora = document.getElementById('hora');
             const opcionesHora = selectHora.options;
 
-            // Primero habilitamos todas las horas
             for (let i = 0; i < opcionesHora.length; i++) {
                 opcionesHora[i].disabled = false;
                 opcionesHora[i].text = opcionesHora[i].value;
@@ -868,7 +917,6 @@
                     horasOcupadas.push(docSnap.data().hora);
                 });
 
-                // Desactivar las horas que ya estén ocupadas
                 for (let i = 0; i < opcionesHora.length; i++) {
                     if (horasOcupadas.includes(opcionesHora[i].value)) {
                         opcionesHora[i].disabled = true;
@@ -882,7 +930,6 @@
 
         document.getElementById('fecha').addEventListener('change', verificarHorasOcupadas);
 
-        // Cargar las citas del usuario actual
         window.cargarMisCitas = async function() {
             const contenedor = document.getElementById('listaMisCitas');
             contenedor.innerHTML = '<p style="text-align: center; color: #888; font-size: 12px;">Buscando tus citas...</p>';
@@ -917,7 +964,6 @@
             }
         };
 
-        // Panel Admin: Cargar todas las reservas
         window.cargarCitasAdmin = async function() {
             const contenedor = document.getElementById('listaCitasAdmin');
             contenedor.innerHTML = '<p style="text-align: center; color: #888; font-size: 12px;">Cargando citas de Firestore...</p>';
@@ -961,7 +1007,104 @@
             }
         }
 
-        // Facebook Login
+        // Cargar usuarios en el Panel Admin de Sellos
+        window.cargarUsuariosAdmin = async function() {
+            const contenedor = document.getElementById('listaUsuariosAdmin');
+            contenedor.innerHTML = '<p style="text-align: center; color: #888; font-size: 12px;">Cargando clientes...</p>';
+
+            try {
+                const querySnapshot = await window.getDocs(window.collection(window.db, "usuarios"));
+                listaUsuariosCache = [];
+                querySnapshot.forEach((docSnap) => {
+                    listaUsuariosCache.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                renderizarListaUsuarios(listaUsuariosCache);
+            } catch (err) {
+                console.log(err);
+                contenedor.innerHTML = '<p style="text-align: center; color: #c0392b; font-size: 12px;">Error al cargar clientes.</p>';
+            }
+        }
+
+        function renderizarListaUsuarios(usuarios) {
+            const contenedor = document.getElementById('listaUsuariosAdmin');
+            if (usuarios.length === 0) {
+                contenedor.innerHTML = '<p style="text-align: center; color: #aaa; font-size: 12px;">No hay clientes registrados.</p>';
+                return;
+            }
+
+            let html = '';
+            usuarios.forEach(u => {
+                const sellos = u.sellos || [false, false, false, false];
+                const cantSellosActivos = sellos.filter(Boolean).length;
+                html += `
+                    <div class="admin-usuario-card">
+                        <p><b>Nombre:</b> ${u.nombre}</p>
+                        <p><b>Correo:</b> ${u.email}</p>
+                        <p><b>Sellos actuales:</b> ${cantSellosActivos} / 4 ${cantSellosActivos === 4 ? '🎁 ¡PREMIO LISTO!' : ''}</p>
+                        <button class="btn-accion-admin" onclick="agregarSelloCliente('${u.id}')">+ Añadir Sello</button>
+                        <button class="btn-accion-admin" style="background:#c0392b;" onclick="reiniciarSellosCliente('${u.id}')">Reiniciar</button>
+                    </div>
+                `;
+            });
+            contenedor.innerHTML = html;
+        }
+
+        window.filtrarClientesAdmin = function() {
+            const texto = document.getElementById('buscarClienteInput').value.toLowerCase();
+            const filtrados = listaUsuariosCache.filter(u => 
+                (u.nombre && u.nombre.toLowerCase().includes(texto)) || 
+                (u.email && u.email.toLowerCase().includes(texto))
+            );
+            renderizarListaUsuarios(filtrados);
+        }
+
+        window.agregarSelloCliente = async function(uidCliente) {
+            try {
+                const userRef = window.doc(window.db, "usuarios", uidCliente);
+                const userSnap = await window.getDoc(userRef);
+                if (!userSnap.exists()) return;
+
+                let sellos = userSnap.data().sellos || [false, false, false, false];
+                
+                // Encontrar el primer sello no marcado y marcarlo
+                let marcado = false;
+                for (let i = 0; i < sellos.length; i++) {
+                    if (!sellos[i]) {
+                        sellos[i] = true;
+                        marcado = true;
+                        break;
+                    }
+                }
+
+                if (!marcado) {
+                    alert("¡Este cliente ya tiene los 4 sellos completos (Premio disponible)! Reinicia su tarjeta si ya reclamó su premio.");
+                    return;
+                }
+
+                await window.updateDoc(userRef, { sellos: sellos });
+                window.cargarUsuariosAdmin();
+                alert("¡Sello añadido exitosamente!");
+            } catch (err) {
+                console.log(err);
+                alert("Error al añadir sello.");
+            }
+        }
+
+        window.reiniciarSellosCliente = async function(uidCliente) {
+            if (confirm("¿Reiniciar la tarjeta de sellos de este cliente a cero?")) {
+                try {
+                    const userRef = window.doc(window.db, "usuarios", uidCliente);
+                    await window.updateDoc(userRef, { sellos: [false, false, false, false] });
+                    window.cargarUsuariosAdmin();
+                    alert("Tarjeta reiniciada.");
+                } catch (err) {
+                    console.log(err);
+                    alert("No se pudo reiniciar.");
+                }
+            }
+        }
+
         document.getElementById('btnFacebook').addEventListener('click', async function() {
             try {
                 const provider = new window.FacebookAuthProvider();
@@ -973,7 +1116,6 @@
             }
         });
 
-        // Registro por Email
         document.getElementById('btnRegistrarEmail').addEventListener('click', async function() {
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
@@ -989,7 +1131,6 @@
             }
         });
 
-        // Iniciar Sesión por Email
         document.getElementById('btnLoginEmail').addEventListener('click', async function() {
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
@@ -1005,7 +1146,6 @@
             }
         });
 
-        // Estado del negocio (Abierto/Cerrado)
         const ahora = new Date();
         const horaActual = ahora.getHours();
         const badgeEstado = document.getElementById('estadoNegocio');
@@ -1017,7 +1157,6 @@
             badgeEstado.className = "badge closed";
         }
 
-        // Envío de reservas a la base de datos con UID del cliente y validación anti-duplicados de hora
         const form = document.getElementById('reservaForm');
         const modal = document.getElementById('modalConfirmacion');
         const btnEntendido = document.getElementById('btnEntendido');
@@ -1035,7 +1174,6 @@
 
             try {
                 if (window.db) {
-                    // Doble verificación rápida antes de guardar para evitar empalmes de última hora
                     const qCheck = window.query(window.collection(window.db, "reservas"), window.where("fecha", "==", fecha), window.where("hora", "==", hora));
                     const checkSnap = await window.getDocs(qCheck);
                     
