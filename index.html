@@ -8,7 +8,7 @@
     <!-- SDKs de Firebase (Versión Modular oficial con Auth y Firestore) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
         import { getAuth, FacebookAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
         // Configuración oficial de tu base de datos de Firebase
@@ -36,6 +36,10 @@
         window.onSnapshot = onSnapshot;
         window.collection = collection;
         window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.deleteDoc = deleteDoc;
+        window.query = query;
+        window.orderBy = orderBy;
     </script>
 
     <style>
@@ -91,7 +95,7 @@
             background: #181818;
             border: 1px solid #d4af37;
             border-radius: 10px;
-            width: 210px;
+            width: 230px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.9);
             z-index: 30;
             overflow: hidden;
@@ -246,6 +250,60 @@
             color: #27ae60;
             font-weight: bold;
             font-size: 14px;
+        }
+        /* Galería Lookbook Estilos */
+        .lookbook-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .lookbook-card {
+            background: #181818;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+        }
+        .lookbook-card img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+        }
+        .lookbook-card p {
+            font-size: 11px;
+            color: #e5c158;
+            padding: 6px;
+            font-weight: bold;
+        }
+        /* Panel Admin de Citas */
+        .admin-cita-card {
+            background: #181818;
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-align: left;
+        }
+        .admin-cita-card p {
+            margin-bottom: 3px;
+            color: #ddd;
+        }
+        .admin-cita-card b {
+            color: #e5c158;
+        }
+        .btn-eliminar-cita {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+            text-transform: uppercase;
         }
         .qr-container {
             background: #171717;
@@ -491,6 +549,8 @@
                 <div class="menu-item active" onclick="seleccionarOpcion('reserva', this)">📅 Reservar Cita</div>
                 <div class="menu-item" onclick="seleccionarOpcion('fidelidad', this)">⭐ Tarjeta de Sellos</div>
                 <div class="menu-item" onclick="seleccionarOpcion('catalogo', this)">✂️ Precios y Cortes</div>
+                <div class="menu-item" onclick="seleccionarOpcion('lookbook', this)">📸 Lookbook / Galería</div>
+                <div class="menu-item" onclick="seleccionarOpcion('admin', this)">🛡️ Ver Citas (Admin)</div>
                 <div class="menu-item" onclick="seleccionarOpcion('pagos', this)">💳 Pagos y QR</div>
             </div>
 
@@ -620,6 +680,44 @@
                 </div>
             </div>
 
+            <!-- NUEVA SECCIÓN: LOOKBOOK / GALERÍA DE CORTES -->
+            <div id="seccion-lookbook" class="section-view">
+                <div class="brand-header" style="margin-bottom: 10px;">
+                    <h3 style="color: #e5c158; font-size: 15px; text-transform: uppercase;">Galería Bárbaros</h3>
+                    <p style="color: #aaa; font-size: 11px;">Nuestros mejores trabajos y estilos</p>
+                </div>
+                <div class="lookbook-grid">
+                    <div class="lookbook-card">
+                        <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=300&auto=format&fit=crop&q=60" alt="Fade">
+                        <p>High Fade</p>
+                    </div>
+                    <div class="lookbook-card">
+                        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=300&auto=format&fit=crop&q=60" alt="Barba">
+                        <p>Ritual Barba</p>
+                    </div>
+                    <div class="lookbook-card">
+                        <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=300&auto=format&fit=crop&q=60" alt="Clasico">
+                        <p>Corte Clásico</p>
+                    </div>
+                    <div class="lookbook-card">
+                        <img src="https://images.unsplash.com/photo-1532712938310-34cb3982ef74?w=300&auto=format&fit=crop&q=60" alt="Diseño">
+                        <p>Diseño & Líneas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NUEVA SECCIÓN: PANEL ADMIN DE CITAS -->
+            <div id="seccion-admin" class="section-view">
+                <div class="brand-header" style="margin-bottom: 10px;">
+                    <h3 style="color: #e5c158; font-size: 15px; text-transform: uppercase;">Agenda de Citas</h3>
+                    <p style="color: #aaa; font-size: 11px;">Listado de clientes reservados en la nube</p>
+                </div>
+                <div id="listaCitasAdmin">
+                    <p style="text-align: center; color: #888; font-size: 12px;">Cargando citas...</p>
+                </div>
+                <button type="button" class="main-btn" onclick="cargarCitasAdmin()" style="margin-top: 5px; background: #2980b9; color: white;">🔄 Actualizar Lista</button>
+            </div>
+
             <!-- SECCIÓN 4: PAGOS Y QR -->
             <div id="seccion-pagos" class="section-view">
                 <div class="qr-container">
@@ -664,7 +762,6 @@
             const userRef = window.doc(window.db, "usuarios", user.uid);
             const userSnap = await window.getDoc(userRef);
 
-            // Si es su primera vez, creamos su documento con 0 sellos
             if (!userSnap.exists()) {
                 await window.setDoc(userRef, {
                     nombre: user.displayName || user.email.split('@')[0],
@@ -674,8 +771,7 @@
                 });
             }
 
-            // Escuchar cambios en tiempo real de los sellos de este usuario específico
-            if (unsubscribeSellos) unsubscribeSellos(); // Limpiar escucha anterior si la hubiera
+            if (unsubscribeSellos) unsubscribeSellos();
             unsubscribeSellos = window.onSnapshot(userRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const datos = docSnap.data();
@@ -712,6 +808,11 @@
             document.getElementById('seccion-' + seccionId).classList.add('active');
             elemento.classList.add('active');
             document.getElementById('dropdownMenu').classList.remove('show');
+
+            // Si entra a la sección admin, cargar citas automáticamente
+            if(seccionId === 'admin') {
+                window.cargarCitasAdmin();
+            }
         }
 
         window.addEventListener('click', function(e) {
@@ -721,6 +822,51 @@
                 menu.classList.remove('show');
             }
         });
+
+        // Función para el Panel Admin: Cargar todas las reservas
+        window.cargarCitasAdmin = async function() {
+            const contenedor = document.getElementById('listaCitasAdmin');
+            contenedor.innerHTML = '<p style="text-align: center; color: #888; font-size: 12px;">Cargando citas de Firestore...</p>';
+            
+            try {
+                const querySnapshot = await window.getDocs(window.collection(window.db, "reservas"));
+                if(querySnapshot.empty) {
+                    contenedor.innerHTML = '<p style="text-align: center; color: #aaa; font-size: 12px;">No hay citas registradas todavía.</p>';
+                    return;
+                }
+
+                let html = '';
+                querySnapshot.forEach((docSnap) => {
+                    const c = docSnap.data();
+                    html += `
+                        <div class="admin-cita-card">
+                            <p><b>Cliente:</b> ${c.nombre || 'Sin nombre'}</p>
+                            <p><b>Servicio:</b> ${c.servicio || 'No especificado'}</p>
+                            <p><b>Barbero:</b> ${c.barbero || 'Libre'}</p>
+                            <p><b>Fecha/Hora:</b> ${c.fecha || ''} - ${c.hora || ''}</p>
+                            ${c.nota ? `<p><b>Nota:</b> ${c.nota}</p>` : ''}
+                            <button class="btn-eliminar-cita" onclick="eliminarCitaAdmin('${docSnap.id}')">Atendido / Borrar</button>
+                        </div>
+                    `;
+                });
+                contenedor.innerHTML = html;
+            } catch (err) {
+                console.log(err);
+                contenedor.innerHTML = '<p style="text-align: center; color: #c0392b; font-size: 12px;">Error al cargar las citas.</p>';
+            }
+        }
+
+        // Función para eliminar/completar cita en el panel admin
+        window.eliminarCitaAdmin = async function(idCita) {
+            if(confirm("¿Marcar esta cita como atendida y borrarla de la lista?")) {
+                try {
+                    await window.deleteDoc(window.doc(window.db, "reservas", idCita));
+                    window.cargarCitasAdmin();
+                } catch(e) {
+                    alert("No se pudo eliminar la cita.");
+                }
+            }
+        }
 
         // Facebook Login
         document.getElementById('btnFacebook').addEventListener('click', async function() {
