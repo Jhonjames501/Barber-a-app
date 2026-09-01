@@ -9,7 +9,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
         import { getFirestore, collection } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
-        import { getAuth, FacebookAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+        import { getAuth, FacebookAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
         // Configuración oficial de tu base de datos de Firebase
         const firebaseConfig = {
@@ -27,6 +27,9 @@
         window.auth = getAuth(app);
         window.FacebookAuthProvider = FacebookAuthProvider;
         window.signInWithPopup = signInWithPopup;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.updateProfile = updateProfile;
     </script>
 
     <style>
@@ -313,7 +316,7 @@
             font-size: 13px;
             border-radius: 8px;
             cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-transform: uppercase;
             display: flex;
             align-items: center;
@@ -323,6 +326,37 @@
         .btn-facebook:hover {
             background-color: #145dbf;
         }
+        .auth-box {
+            background: #171717;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .auth-box h4 {
+            color: #e5c158;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .auth-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .btn-auth-action {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .btn-register { background: #27ae60; color: white; }
+        .btn-login { background: #2980b9; color: white; }
         .payment-methods {
             text-align: center;
             margin: 10px 0;
@@ -431,15 +465,29 @@
                 <span id="estadoNegocio" class="badge">Verificando horario...</span>
             </div>
 
-            <!-- Botón de Facebook Login -->
+            <!-- Botones de Autenticación -->
             <button type="button" id="btnFacebook" class="btn-facebook">
                 🔵 Iniciar sesión con Facebook
             </button>
 
+            <div class="auth-box">
+                <h4>O usa Correo y Contraseña</h4>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <input type="email" id="authEmail" placeholder="Tu correo electrónico">
+                </div>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <input type="password" id="authPassword" placeholder="Contraseña">
+                </div>
+                <div class="auth-row">
+                    <button type="button" id="btnRegistrarEmail" class="btn-auth-action btn-register">Registrarse</button>
+                    <button type="button" id="btnLoginEmail" class="btn-auth-action btn-login">Iniciar Sesión</button>
+                </div>
+            </div>
+
             <form id="reservaForm">
                 <div class="form-group">
                     <label for="nombre">Tu nombre:</label>
-                    <input type="text" id="nombre" required placeholder="Ej. Carlos Pérez (o usa Facebook)">
+                    <input type="text" id="nombre" required placeholder="Ej. Carlos Pérez (o inicia sesión arriba)">
                 </div>
 
                 <div class="form-group">
@@ -583,7 +631,7 @@
         </div>
     </div>
 
-    <!-- Script de lógica y autenticación con Facebook -->
+    <!-- Script de lógica y autenticación -->
     <script type="module">
         import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
@@ -615,13 +663,52 @@
                 const provider = new window.FacebookAuthProvider();
                 const result = await window.signInWithPopup(window.auth, provider);
                 const user = result.user;
-                
-                // Rellena automáticamente el campo de nombre con el perfil de Facebook
                 document.getElementById('nombre').value = user.displayName;
                 alert("¡Sesión iniciada con éxito, " + user.displayName + "!");
             } catch (error) {
                 console.log("Error al iniciar sesión con Facebook: ", error);
-                alert("No se pudo iniciar sesión con Facebook. Asegúrate de activarlo en tu consola de Firebase.");
+                alert("No se pudo iniciar sesión con Facebook.");
+            }
+        });
+
+        // Lógica de Registro con Correo y Contraseña
+        document.getElementById('btnRegistrarEmail').addEventListener('click', async function() {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            if(!email || !password) {
+                alert("Por favor ingresa un correo y contraseña.");
+                return;
+            }
+            try {
+                const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, password);
+                const user = userCredential.user;
+                // Extraer el nombre antes del @ para ponerlo por defecto
+                const nombreSugerido = email.split('@')[0];
+                document.getElementById('nombre').value = nombreSugerido;
+                alert("¡Cuenta creada y sesión iniciada con éxito!");
+            } catch (error) {
+                console.log("Error al registrarse:", error);
+                alert("Error al registrarse: " + error.message);
+            }
+        });
+
+        // Lógica de Inicio de Sesión con Correo y Contraseña
+        document.getElementById('btnLoginEmail').addEventListener('click', async function() {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            if(!email || !password) {
+                alert("Por favor ingresa tu correo y contraseña.");
+                return;
+            }
+            try {
+                const userCredential = await window.signInWithEmailAndPassword(window.auth, email, password);
+                const user = userCredential.user;
+                const nombreSugerido = email.split('@')[0];
+                document.getElementById('nombre').value = nombreSugerido;
+                alert("¡Bienvenido de nuevo, " + nombreSugerido + "!");
+            } catch (error) {
+                console.log("Error al iniciar sesión:", error);
+                alert("No se pudo iniciar sesión. Verifica tus datos.");
             }
         });
 
