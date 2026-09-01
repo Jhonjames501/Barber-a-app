@@ -8,7 +8,7 @@
     <!-- SDKs de Firebase (Versión Modular oficial con Auth y Firestore) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
         import { getAuth, FacebookAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
         // Configuración oficial de tu base de datos de Firebase
@@ -39,6 +39,7 @@
         window.getDocs = getDocs;
         window.deleteDoc = deleteDoc;
         window.query = query;
+        window.where = where;
         window.orderBy = orderBy;
     </script>
 
@@ -251,7 +252,6 @@
             font-weight: bold;
             font-size: 14px;
         }
-        /* Galería Lookbook Estilos */
         .lookbook-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -276,8 +276,7 @@
             padding: 6px;
             font-weight: bold;
         }
-        /* Panel Admin de Citas */
-        .admin-cita-card {
+        .admin-cita-card, .historial-cita-card {
             background: #181818;
             border: 1px solid #d4af37;
             border-radius: 8px;
@@ -286,11 +285,11 @@
             font-size: 12px;
             text-align: left;
         }
-        .admin-cita-card p {
+        .admin-cita-card p, .historial-cita-card p {
             margin-bottom: 3px;
             color: #ddd;
         }
-        .admin-cita-card b {
+        .admin-cita-card b, .historial-cita-card b {
             color: #e5c158;
         }
         .btn-eliminar-cita {
@@ -547,6 +546,7 @@
 
             <div class="dropdown-menu" id="dropdownMenu">
                 <div class="menu-item active" onclick="seleccionarOpcion('reserva', this)">📅 Reservar Cita</div>
+                <div class="menu-item" onclick="seleccionarOpcion('misCitas', this)">📋 Mis Citas Guardadas</div>
                 <div class="menu-item" onclick="seleccionarOpcion('fidelidad', this)">⭐ Tarjeta de Sellos</div>
                 <div class="menu-item" onclick="seleccionarOpcion('catalogo', this)">✂️ Precios y Cortes</div>
                 <div class="menu-item" onclick="seleccionarOpcion('lookbook', this)">📸 Lookbook / Galería</div>
@@ -559,7 +559,7 @@
                 <p class="subtitle">Tu Corte - Tu Estilo</p>
             </div>
 
-            <!-- SECCIÓN 1: RESERVAS -->
+            <!-- SECCIÓN 1: RESERVAS (CON CONTROL DE HORAS OCUPADAS) -->
             <div id="seccion-reserva" class="section-view active">
                 <div class="status-badge">
                     <span id="estadoNegocio" class="badge">Verificando horario...</span>
@@ -625,7 +625,19 @@
                 </form>
             </div>
 
-            <!-- SECCIÓN 2: FIDELIZACIÓN (CONECTADA A FIRESTORE) -->
+            <!-- NUEVA SECCIÓN: MIS CITAS GUARDADAS (CLIENTE) -->
+            <div id="seccion-misCitas" class="section-view">
+                <div class="brand-header" style="margin-bottom: 10px;">
+                    <h3 style="color: #e5c158; font-size: 15px; text-transform: uppercase;">Mis Citas Pendientes</h3>
+                    <p style="color: #aaa; font-size: 11px;">Tus reservas hechas con esta cuenta</p>
+                </div>
+                <div id="listaMisCitas">
+                    <p style="text-align: center; color: #888; font-size: 12px;">Cargando tus citas...</p>
+                </div>
+                <button type="button" class="main-btn" onclick="cargarMisCitas()" style="margin-top: 5px; background: #2980b9; color: white;">🔄 Actualizar</button>
+            </div>
+
+            <!-- SECCIÓN FIDELIZACIÓN -->
             <div id="seccion-fidelidad" class="section-view">
                 <div class="loyalty-banner">
                     <h3>★ Recompensamos tu Fidelidad ★</h3>
@@ -646,7 +658,7 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 3: CATÁLOGO -->
+            <!-- SECCIÓN CATÁLOGO -->
             <div id="seccion-catalogo" class="section-view">
                 <div class="catalog-grid">
                     <div class="catalog-card">
@@ -680,7 +692,7 @@
                 </div>
             </div>
 
-            <!-- NUEVA SECCIÓN: LOOKBOOK / GALERÍA DE CORTES -->
+            <!-- SECCIÓN LOOKBOOK / GALERÍA DE CORTES -->
             <div id="seccion-lookbook" class="section-view">
                 <div class="brand-header" style="margin-bottom: 10px;">
                     <h3 style="color: #e5c158; font-size: 15px; text-transform: uppercase;">Galería Bárbaros</h3>
@@ -706,7 +718,7 @@
                 </div>
             </div>
 
-            <!-- NUEVA SECCIÓN: PANEL ADMIN DE CITAS -->
+            <!-- PANEL ADMIN DE CITAS -->
             <div id="seccion-admin" class="section-view">
                 <div class="brand-header" style="margin-bottom: 10px;">
                     <h3 style="color: #e5c158; font-size: 15px; text-transform: uppercase;">Agenda de Citas</h3>
@@ -718,7 +730,7 @@
                 <button type="button" class="main-btn" onclick="cargarCitasAdmin()" style="margin-top: 5px; background: #2980b9; color: white;">🔄 Actualizar Lista</button>
             </div>
 
-            <!-- SECCIÓN 4: PAGOS Y QR -->
+            <!-- SECCIÓN PAGOS Y QR -->
             <div id="seccion-pagos" class="section-view">
                 <div class="qr-container">
                     <h3 style="color: #e5c158; font-size: 15px; margin-bottom: 5px; text-transform: uppercase;">Yape / Plin / QR</h3>
@@ -756,9 +768,11 @@
         document.getElementById('fecha').valueAsDate = new Date();
 
         let unsubscribeSellos = null;
+        let usuarioActualUID = null;
 
-        // Función para registrar o verificar al usuario en Firestore y escuchar sus sellos en tiempo real
+        // Función para registrar o verificar al usuario en Firestore
         async function gestionarUsuarioEnDB(user) {
+            usuarioActualUID = user.uid;
             const userRef = window.doc(window.db, "usuarios", user.uid);
             const userSnap = await window.getDoc(userRef);
 
@@ -783,6 +797,9 @@
             document.getElementById('pantalla-login').style.display = 'none';
             document.getElementById('app-contenido').style.display = 'block';
             document.getElementById('nombre').value = nombreFinal;
+
+            // Verificar horas ocupadas al entrar
+            verificarHorasOcupadas();
         }
 
         function actualizarInterfazSellos(estadoSellos) {
@@ -809,9 +826,14 @@
             elemento.classList.add('active');
             document.getElementById('dropdownMenu').classList.remove('show');
 
-            // Si entra a la sección admin, cargar citas automáticamente
             if(seccionId === 'admin') {
                 window.cargarCitasAdmin();
+            }
+            if(seccionId === 'misCitas') {
+                window.cargarMisCitas();
+            }
+            if(seccionId === 'reserva') {
+                verificarHorasOcupadas();
             }
         }
 
@@ -823,7 +845,79 @@
             }
         });
 
-        // Función para el Panel Admin: Cargar todas las reservas
+        // Función para bloquear automáticamente horas ya reservadas en la fecha seleccionada
+        async function verificarHorasOcupadas() {
+            const fechaSeleccionada = document.getElementById('fecha').value;
+            const selectHora = document.getElementById('hora');
+            const opcionesHora = selectHora.options;
+
+            // Primero habilitamos todas las horas
+            for (let i = 0; i < opcionesHora.length; i++) {
+                opcionesHora[i].disabled = false;
+                opcionesHora[i].text = opcionesHora[i].value;
+            }
+
+            if (!fechaSeleccionada) return;
+
+            try {
+                const q = window.query(window.collection(window.db, "reservas"), window.where("fecha", "==", fechaSeleccionada));
+                const querySnapshot = await window.getDocs(q);
+
+                const horasOcupadas = [];
+                querySnapshot.forEach((docSnap) => {
+                    horasOcupadas.push(docSnap.data().hora);
+                });
+
+                // Desactivar las horas que ya estén ocupadas
+                for (let i = 0; i < opcionesHora.length; i++) {
+                    if (horasOcupadas.includes(opcionesHora[i].value)) {
+                        opcionesHora[i].disabled = true;
+                        opcionesHora[i].text = opcionesHora[i].value + " (Ocupado ❌)";
+                    }
+                }
+            } catch (err) {
+                console.log("Error al verificar horas ocupadas: ", err);
+            }
+        }
+
+        document.getElementById('fecha').addEventListener('change', verificarHorasOcupadas);
+
+        // Cargar las citas del usuario actual
+        window.cargarMisCitas = async function() {
+            const contenedor = document.getElementById('listaMisCitas');
+            contenedor.innerHTML = '<p style="text-align: center; color: #888; font-size: 12px;">Buscando tus citas...</p>';
+
+            if (!usuarioActualUID) return;
+
+            try {
+                const q = window.query(window.collection(window.db, "reservas"), window.where("uid", "==", usuarioActualUID));
+                const querySnapshot = await window.getDocs(q);
+
+                if (querySnapshot.empty) {
+                    contenedor.innerHTML = '<p style="text-align: center; color: #aaa; font-size: 12px;">No tienes citas reservadas actualmente.</p>';
+                    return;
+                }
+
+                let html = '';
+                querySnapshot.forEach((docSnap) => {
+                    const c = docSnap.data();
+                    html += `
+                        <div class="historial-cita-card">
+                            <p><b>Servicio:</b> ${c.servicio}</p>
+                            <p><b>Barbero:</b> ${c.barbero}</p>
+                            <p><b>Fecha:</b> ${c.fecha} a las ${c.hora}</p>
+                            ${c.nota ? `<p><b>Nota:</b> ${c.nota}</p>` : ''}
+                        </div>
+                    `;
+                });
+                contenedor.innerHTML = html;
+            } catch (err) {
+                console.log(err);
+                contenedor.innerHTML = '<p style="text-align: center; color: #c0392b; font-size: 12px;">Error al cargar tu historial.</p>';
+            }
+        };
+
+        // Panel Admin: Cargar todas las reservas
         window.cargarCitasAdmin = async function() {
             const contenedor = document.getElementById('listaCitasAdmin');
             contenedor.innerHTML = '<p style="text-align: center; color: #888; font-size: 12px;">Cargando citas de Firestore...</p>';
@@ -856,7 +950,6 @@
             }
         }
 
-        // Función para eliminar/completar cita en el panel admin
         window.eliminarCitaAdmin = async function(idCita) {
             if(confirm("¿Marcar esta cita como atendida y borrarla de la lista?")) {
                 try {
@@ -924,7 +1017,7 @@
             badgeEstado.className = "badge closed";
         }
 
-        // Envío de reservas a la base de datos
+        // Envío de reservas a la base de datos con UID del cliente y validación anti-duplicados de hora
         const form = document.getElementById('reservaForm');
         const modal = document.getElementById('modalConfirmacion');
         const btnEntendido = document.getElementById('btnEntendido');
@@ -942,7 +1035,18 @@
 
             try {
                 if (window.db) {
+                    // Doble verificación rápida antes de guardar para evitar empalmes de última hora
+                    const qCheck = window.query(window.collection(window.db, "reservas"), window.where("fecha", "==", fecha), window.where("hora", "==", hora));
+                    const checkSnap = await window.getDocs(qCheck);
+                    
+                    if (!checkSnap.empty) {
+                        alert("⚠️ Lo sentimos, esta hora acaba de ser reservada por otro cliente. Por favor elige otra hora.");
+                        verificarHorasOcupadas();
+                        return;
+                    }
+
                     await window.addDoc(window.collection(window.db, "reservas"), {
+                        uid: usuarioActualUID,
                         nombre, barbero, servicio, fecha, hora, nota,
                         timestamp: new Date()
                     });
