@@ -137,6 +137,14 @@
         .section-view.active {
             display: block;
         }
+        /* Pantalla de bloqueo inicial (Login obligatorio) */
+        #pantalla-login {
+            text-align: center;
+            padding: 10px 0;
+        }
+        #app-contenido {
+            display: none; /* Oculto hasta que inicie sesión */
+        }
         .status-badge {
             text-align: center;
             margin-bottom: 15px;
@@ -263,6 +271,7 @@
         }
         .form-group {
             margin-bottom: 12px;
+            text-align: left;
         }
         label {
             display: block;
@@ -316,7 +325,7 @@
             font-size: 13px;
             border-radius: 8px;
             cursor: pointer;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-transform: uppercase;
             display: flex;
             align-items: center;
@@ -445,180 +454,190 @@
 <body>
 
     <div class="container">
-        <button class="menu-toggle-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
-
-        <div class="dropdown-menu" id="dropdownMenu">
-            <div class="menu-item active" onclick="seleccionarOpcion('reserva', this)">📅 Reservar Cita</div>
-            <div class="menu-item" onclick="seleccionarOpcion('fidelidad', this)">⭐ Tarjeta de Sellos</div>
-            <div class="menu-item" onclick="seleccionarOpcion('catalogo', this)">✂️ Precios y Cortes</div>
-            <div class="menu-item" onclick="seleccionarOpcion('pagos', this)">💳 Pagos y QR</div>
-        </div>
-
-        <div class="brand-header">
-            <h1>Bárbaros</h1>
-            <p class="subtitle">Tu Corte - Tu Estilo</p>
-        </div>
-
-        <!-- SECCIÓN 1: RESERVAS -->
-        <div id="seccion-reserva" class="section-view active">
-            <div class="status-badge">
-                <span id="estadoNegocio" class="badge">Verificando horario...</span>
+        <!-- PANTALLA 1: LOGIN OBLIGATORIO AL ABRIR -->
+        <div id="pantalla-login">
+            <div class="brand-header">
+                <h1>Bárbaros</h1>
+                <p class="subtitle">Identifícate para entrar</p>
             </div>
 
-            <!-- Botones de Autenticación -->
             <button type="button" id="btnFacebook" class="btn-facebook">
                 🔵 Iniciar sesión con Facebook
             </button>
 
             <div class="auth-box">
-                <h4>O usa Correo y Contraseña</h4>
+                <h4>Correo y Contraseña</h4>
                 <div class="form-group" style="margin-bottom: 8px;">
-                    <input type="email" id="authEmail" placeholder="Tu correo electrónico">
+                    <input type="email" id="authEmail" placeholder="tucorreo@gmail.com">
                 </div>
                 <div class="form-group" style="margin-bottom: 8px;">
                     <input type="password" id="authPassword" placeholder="Contraseña">
                 </div>
                 <div class="auth-row">
                     <button type="button" id="btnRegistrarEmail" class="btn-auth-action btn-register">Registrarse</button>
-                    <button type="button" id="btnLoginEmail" class="btn-auth-action btn-login">Iniciar Sesión</button>
-                </div>
-            </div>
-
-            <form id="reservaForm">
-                <div class="form-group">
-                    <label for="nombre">Tu nombre:</label>
-                    <input type="text" id="nombre" required placeholder="Ej. Carlos Pérez (o inicia sesión arriba)">
-                </div>
-
-                <div class="form-group">
-                    <label for="barbero">Selecciona al Barbero:</label>
-                    <select id="barbero">
-                        <option value="Cualquier Barbero / El que esté libre">Cualquier Barbero</option>
-                        <option value="Barbero Principal">Barbero Principal</option>
-                        <option value="Jhon (Tu Barbero)">Jhon</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="servicio">Selecciona el Servicio:</label>
-                    <select id="servicio">
-                        <option value="Corte Escolar / Niños - S/ 15">Corte Escolar / Niños - S/ 15</option>
-                        <option value="Corte Clásico - S/ 20">Corte Clásico - S/ 20</option>
-                        <option value="Fade / Degradado - S/ 25">Fade / Degradado - S/ 25</option>
-                        <option value="Corte + Barba - S/ 35">Corte + Barba - S/ 35</option>
-                        <option value="Corte + Cejas - S/ 28">Corte + Cejas - S/ 28</option>
-                        <option value="Diseño / Barbería Completa - S/ 45">Diseño / Barbería Completa - S/ 45</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="fecha">Fecha de la Cita:</label>
-                    <input type="date" id="fecha" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="hora">Hora Disponible:</label>
-                    <select id="hora">
-                        <option value="11:00 AM">11:00 AM</option>
-                        <option value="12:00 PM">12:00 PM</option>
-                        <option value="01:00 PM">01:00 PM</option>
-                        <option value="02:00 PM">02:00 PM</option>
-                        <option value="03:00 PM">03:00 PM</option>
-                        <option value="04:00 PM">04:00 PM</option>
-                        <option value="05:00 PM">05:00 PM</option>
-                        <option value="06:00 PM">06:00 PM</option>
-                        <option value="07:00 PM">07:00 PM</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="nota">Observación (Opcional):</label>
-                    <textarea id="nota" placeholder="Ej. Con diseño de raya..."></textarea>
-                </div>
-
-                <div class="payment-methods">
-                    💳 Aceptamos: Efectivo, Yape y Plin
-                </div>
-
-                <button type="submit" class="main-btn">Reservar por WhatsApp</button>
-            </form>
-        </div>
-
-        <!-- SECCIÓN 2: FIDELIZACIÓN -->
-        <div id="seccion-fidelidad" class="section-view">
-            <div class="loyalty-banner">
-                <h3>★ Recompensamos tu Fidelidad ★</h3>
-                <p>
-                    • <b>1er regalo:</b> Corte con 50% de descuento o facial gratis.<br>
-                    • <b>2do regalo:</b> Corte gratis / cera / facial gratis.
-                </p>
-            </div>
-            <div class="stamp-card-box">
-                <p style="color: #e5c158; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Tus Sellos Acumulados</p>
-                <p style="color: #888; font-size: 11px;">Toca un sello para marcarlo o desmarcarlo.</p>
-                <div class="stamp-grid">
-                    <div class="stamp-item" onclick="toggleStamp(0)">✓ 1</div>
-                    <div class="stamp-item" onclick="toggleStamp(1)">✓ 2</div>
-                    <div class="stamp-item" onclick="toggleStamp(2)">3</div>
-                    <div class="stamp-item" onclick="toggleStamp(3)">🎁 4</div>
+                    <button type="button" id="btnLoginEmail" class="btn-auth-action btn-login">Entrar</button>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN 3: CATÁLOGO -->
-        <div id="seccion-catalogo" class="section-view">
-            <div class="catalog-grid">
-                <div class="catalog-card">
-                    <div class="catalog-info">
-                        <h4>Corte Clásico</h4>
-                        <p>Corte tradicional con acabado limpio.</p>
-                    </div>
-                    <div class="catalog-price">S/ 20</div>
-                </div>
-                <div class="catalog-card">
-                    <div class="catalog-info">
-                        <h4>Fade / Degradado</h4>
-                        <p>Estilo moderno difuminado al ras.</p>
-                    </div>
-                    <div class="catalog-price">S/ 25</div>
-                </div>
-                <div class="catalog-card">
-                    <div class="catalog-info">
-                        <h4>Corte + Barba</h4>
-                        <p>Perfilado completo y ritual de barba.</p>
-                    </div>
-                    <div class="catalog-price">S/ 35</div>
-                </div>
-                <div class="catalog-card">
-                    <div class="catalog-info">
-                        <h4>Corte Escolar / Niños</h4>
-                        <p>Especial para los más jóvenes.</p>
-                    </div>
-                    <div class="catalog-price">S/ 15</div>
-                </div>
-            </div>
-        </div>
+        <!-- PANTALLA 2: CONTENIDO DE LA APP (OCULTO HASTA INICIAR SESIÓN) -->
+        <div id="app-contenido">
+            <button class="menu-toggle-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
 
-        <!-- SECCIÓN 4: PAGOS Y QR -->
-        <div id="seccion-pagos" class="section-view">
-            <div class="qr-container">
-                <h3 style="color: #e5c158; font-size: 15px; margin-bottom: 5px; text-transform: uppercase;">Yape / Plin / QR</h3>
-                <p class="qr-instructions">Escanea el código con tu celular para realizar el pago rápido:</p>
-                <div class="qr-box">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE-O-PLIN-BARBERIA-BARBAROS" alt="QR">
-                </div>
-                <p style="color: #27ae60; font-size: 13px; font-weight: bold; margin-top: 5px;">Número: 996 887 022</p>
-                <p style="color: #aaa; font-size: 11px; margin-top: 3px;">Titular: Barbería Bárbaros</p>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <div class="menu-item active" onclick="seleccionarOpcion('reserva', this)">📅 Reservar Cita</div>
+                <div class="menu-item" onclick="seleccionarOpcion('fidelidad', this)">⭐ Tarjeta de Sellos</div>
+                <div class="menu-item" onclick="seleccionarOpcion('catalogo', this)">✂️ Precios y Cortes</div>
+                <div class="menu-item" onclick="seleccionarOpcion('pagos', this)">💳 Pagos y QR</div>
             </div>
-        </div>
 
-        <div class="info-section">
-            <div class="social-buttons">
-                <a href="https://maps.app.goo.gl/i4bXNRceiqsKUiwE8" target="_blank" class="btn-map">Ubicación 🗺️</a>
-                <a href="https://instagram.com" target="_blank" class="btn-social">Instagram 📷</a>
+            <div class="brand-header">
+                <h1>Bárbaros</h1>
+                <p class="subtitle">Tu Corte - Tu Estilo</p>
             </div>
-            <div style="margin-top: 8px;">
-                <button type="button" class="btn-share" id="btnCompartir">Compartir App 📤</button>
+
+            <!-- SECCIÓN 1: RESERVAS -->
+            <div id="seccion-reserva" class="section-view active">
+                <div class="status-badge">
+                    <span id="estadoNegocio" class="badge">Verificando horario...</span>
+                </div>
+
+                <form id="reservaForm">
+                    <div class="form-group">
+                        <label for="nombre">Tu nombre:</label>
+                        <input type="text" id="nombre" required placeholder="Tu nombre cargado...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="barbero">Selecciona al Barbero:</label>
+                        <select id="barbero">
+                            <option value="Cualquier Barbero / El que esté libre">Cualquier Barbero</option>
+                            <option value="Barbero Principal">Barbero Principal</option>
+                            <option value="Jhon (Tu Barbero)">Jhon</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="servicio">Selecciona el Servicio:</label>
+                        <select id="servicio">
+                            <option value="Corte Escolar / Niños - S/ 15">Corte Escolar / Niños - S/ 15</option>
+                            <option value="Corte Clásico - S/ 20">Corte Clásico - S/ 20</option>
+                            <option value="Fade / Degradado - S/ 25">Fade / Degradado - S/ 25</option>
+                            <option value="Corte + Barba - S/ 35">Corte + Barba - S/ 35</option>
+                            <option value="Corte + Cejas - S/ 28">Corte + Cejas - S/ 28</option>
+                            <option value="Diseño / Barbería Completa - S/ 45">Diseño / Barbería Completa - S/ 45</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha">Fecha de la Cita:</label>
+                        <input type="date" id="fecha" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hora">Hora Disponible:</label>
+                        <select id="hora">
+                            <option value="11:00 AM">11:00 AM</option>
+                            <option value="12:00 PM">12:00 PM</option>
+                            <option value="01:00 PM">01:00 PM</option>
+                            <option value="02:00 PM">02:00 PM</option>
+                            <option value="03:00 PM">03:00 PM</option>
+                            <option value="04:00 PM">04:00 PM</option>
+                            <option value="05:00 PM">05:00 PM</option>
+                            <option value="06:00 PM">06:00 PM</option>
+                            <option value="07:00 PM">07:00 PM</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nota">Observación (Opcional):</label>
+                        <textarea id="nota" placeholder="Ej. Con diseño de raya..."></textarea>
+                    </div>
+
+                    <div class="payment-methods">
+                        💳 Aceptamos: Efectivo, Yape y Plin
+                    </div>
+
+                    <button type="submit" class="main-btn">Reservar por WhatsApp</button>
+                </form>
+            </div>
+
+            <!-- SECCIÓN 2: FIDELIZACIÓN -->
+            <div id="seccion-fidelidad" class="section-view">
+                <div class="loyalty-banner">
+                    <h3>★ Recompensamos tu Fidelidad ★</h3>
+                    <p>
+                        • <b>1er regalo:</b> Corte con 50% de descuento o facial gratis.<br>
+                        • <b>2do regalo:</b> Corte gratis / cera / facial gratis.
+                    </p>
+                </div>
+                <div class="stamp-card-box">
+                    <p style="color: #e5c158; font-size: 13px; font-weight: bold; margin-bottom: 5px;">Tus Sellos Acumulados</p>
+                    <p style="color: #888; font-size: 11px;">Toca un sello para marcarlo o desmarcarlo.</p>
+                    <div class="stamp-grid">
+                        <div class="stamp-item" onclick="toggleStamp(0)">✓ 1</div>
+                        <div class="stamp-item" onclick="toggleStamp(1)">✓ 2</div>
+                        <div class="stamp-item" onclick="toggleStamp(2)">3</div>
+                        <div class="stamp-item" onclick="toggleStamp(3)">🎁 4</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 3: CATÁLOGO -->
+            <div id="seccion-catalogo" class="section-view">
+                <div class="catalog-grid">
+                    <div class="catalog-card">
+                        <div class="catalog-info">
+                            <h4>Corte Clásico</h4>
+                            <p>Corte tradicional con acabado limpio.</p>
+                        </div>
+                        <div class="catalog-price">S/ 20</div>
+                    </div>
+                    <div class="catalog-card">
+                        <div class="catalog-info">
+                            <h4>Fade / Degradado</h4>
+                            <p>Estilo moderno difuminado al ras.</p>
+                        </div>
+                        <div class="catalog-price">S/ 25</div>
+                    </div>
+                    <div class="catalog-card">
+                        <div class="catalog-info">
+                            <h4>Corte + Barba</h4>
+                            <p>Perfilado completo y ritual de barba.</p>
+                        </div>
+                        <div class="catalog-price">S/ 35</div>
+                    </div>
+                    <div class="catalog-card">
+                        <div class="catalog-info">
+                            <h4>Corte Escolar / Niños</h4>
+                            <p>Especial para los más jóvenes.</p>
+                        </div>
+                        <div class="catalog-price">S/ 15</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 4: PAGOS Y QR -->
+            <div id="seccion-pagos" class="section-view">
+                <div class="qr-container">
+                    <h3 style="color: #e5c158; font-size: 15px; margin-bottom: 5px; text-transform: uppercase;">Yape / Plin / QR</h3>
+                    <p class="qr-instructions">Escanea el código con tu celular para realizar el pago rápido:</p>
+                    <div class="qr-box">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YAPE-O-PLIN-BARBERIA-BARBAROS" alt="QR">
+                    </div>
+                    <p style="color: #27ae60; font-size: 13px; font-weight: bold; margin-top: 5px;">Número: 996 887 022</p>
+                    <p style="color: #aaa; font-size: 11px; margin-top: 3px;">Titular: Barbería Bárbaros</p>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="social-buttons">
+                    <a href="https://maps.app.goo.gl/i4bXNRceiqsKUiwE8" target="_blank" class="btn-map">Ubicación 🗺️</a>
+                    <a href="https://instagram.com" target="_blank" class="btn-social">Instagram 📷</a>
+                </div>
+                <div style="margin-top: 8px;">
+                    <button type="button" class="btn-share" id="btnCompartir">Compartir App 📤</button>
+                </div>
             </div>
         </div>
     </div>
@@ -637,6 +656,13 @@
 
         document.getElementById('fecha').valueAsDate = new Date();
 
+        // Función para mostrar la app completa tras iniciar sesión con éxito
+        function entrarALaApp(nombreUsuario) {
+            document.getElementById('pantalla-login').style.display = 'none';
+            document.getElementById('app-contenido').style.display = 'block';
+            document.getElementById('nombre').value = nombreUsuario;
+        }
+
         window.toggleMenu = function() {
             document.getElementById('dropdownMenu').classList.toggle('show');
         }
@@ -652,7 +678,7 @@
         window.addEventListener('click', function(e) {
             const menu = document.getElementById('dropdownMenu');
             const btn = document.getElementById('menuBtn');
-            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+            if (btn && !menu.contains(e.target) && !btn.contains(e.target)) {
                 menu.classList.remove('show');
             }
         });
@@ -663,8 +689,7 @@
                 const provider = new window.FacebookAuthProvider();
                 const result = await window.signInWithPopup(window.auth, provider);
                 const user = result.user;
-                document.getElementById('nombre').value = user.displayName;
-                alert("¡Sesión iniciada con éxito, " + user.displayName + "!");
+                entrarALaApp(user.displayName);
             } catch (error) {
                 console.log("Error al iniciar sesión con Facebook: ", error);
                 alert("No se pudo iniciar sesión con Facebook.");
@@ -681,11 +706,8 @@
             }
             try {
                 const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, password);
-                const user = userCredential.user;
-                // Extraer el nombre antes del @ para ponerlo por defecto
                 const nombreSugerido = email.split('@')[0];
-                document.getElementById('nombre').value = nombreSugerido;
-                alert("¡Cuenta creada y sesión iniciada con éxito!");
+                entrarALaApp(nombreSugerido);
             } catch (error) {
                 console.log("Error al registrarse:", error);
                 alert("Error al registrarse: " + error.message);
@@ -702,10 +724,8 @@
             }
             try {
                 const userCredential = await window.signInWithEmailAndPassword(window.auth, email, password);
-                const user = userCredential.user;
                 const nombreSugerido = email.split('@')[0];
-                document.getElementById('nombre').value = nombreSugerido;
-                alert("¡Bienvenido de nuevo, " + nombreSugerido + "!");
+                entrarALaApp(nombreSugerido);
             } catch (error) {
                 console.log("Error al iniciar sesión:", error);
                 alert("No se pudo iniciar sesión. Verifica tus datos.");
